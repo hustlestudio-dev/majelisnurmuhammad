@@ -48,7 +48,7 @@ const waLink = settings.whatsapp
   <section class="mx-auto max-w-3xl px-4 py-16 text-center sm:px-6">
     <p class="font-arabic text-2xl text-primary" dir="rtl">بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ</p>
     <Divider class="my-6" />
-    <p class="text-lg leading-relaxed text-pretty text-foreground/80">
+    <p class="mx-auto max-w-prose text-lg leading-relaxed text-pretty text-foreground/80">
       <strong class="text-primary">{settings.siteName ?? 'Majelis Nur Muhammad'}</strong>
       adalah majelis taklim yang lahir dari kecintaan terhadap ilmu dan dakwah. Kami
       menghadirkan kajian keislaman yang mudah dipahami, menyejukkan hati, dan menuntun
@@ -126,22 +126,22 @@ const waLink = settings.whatsapp
         <h2 class="font-display text-3xl font-bold text-balance sm:text-4xl">
           Dukung Dakwah & Kegiatan Majelis
         </h2>
-        <p class="mt-4 text-pretty text-primary-foreground/85">
+        <p class="mx-auto mt-4 max-w-prose text-pretty text-primary-foreground/85">
           Setiap infak dan sedekah yang Anda titipkan menjadi bagian dari amal jariyah
           untuk keberlangsungan majelis ilmu ini.
         </p>
 
         {
           hasDonation && (
-            <div class="mx-auto mt-8 max-w-sm rounded-2xl bg-white/10 p-6 text-left ring-1 ring-white/20 backdrop-blur">
+            <div class="mx-auto mt-8 max-w-sm rounded-2xl bg-black/80 p-6 text-left ring-1 ring-white/20">
               {donation.bankName && (
-                <p class="text-sm text-primary-foreground/70">
+                <p class="text-sm text-white/90">
                   Bank
                   <span class="float-right font-semibold text-white">{donation.bankName}</span>
                 </p>
               )}
               {donation.accountNumber && (
-                <p class="mt-3 text-sm text-primary-foreground/70">
+                <p class="mt-3 text-sm text-white/90">
                   No. Rekening
                   <span class="float-right font-mono font-semibold text-white">
                     {donation.accountNumber}
@@ -149,7 +149,7 @@ const waLink = settings.whatsapp
                 </p>
               )}
               {donation.accountHolder && (
-                <p class="mt-3 text-sm text-primary-foreground/70">
+                <p class="mt-3 text-sm text-white/90">
                   a.n.
                   <span class="float-right font-semibold text-white">
                     {donation.accountHolder}
@@ -157,7 +157,7 @@ const waLink = settings.whatsapp
                 </p>
               )}
               {donation.note && (
-                <p class="mt-4 border-t border-white/15 pt-3 text-xs text-primary-foreground/70">
+                <p class="mt-4 border-t border-white/15 pt-3 text-xs text-white/90">
                   {donation.note}
                 </p>
               )}

@@ -88,6 +88,28 @@ export const seed = async (payload: Payload): Promise<{ seeded: boolean }> => {
     } as any,
   })
 
+  // Always: ensure admin email is correct (safe to re-run).
+  const ADMIN_EMAIL = 'hustlestudio26@gmail.com'
+  const users = await payload.find({ collection: 'users', limit: 1 })
+  if (users.totalDocs === 0) {
+    await payload.create({
+      collection: 'users',
+      data: {
+        email: ADMIN_EMAIL,
+        password: 'admin12345',
+        name: 'Administrator',
+        role: 'admin',
+      } as any,
+    })
+  } else if (users.docs[0].email !== ADMIN_EMAIL) {
+    await payload.update({
+      collection: 'users',
+      id: users.docs[0].id,
+      data: { email: ADMIN_EMAIL } as any,
+    })
+    payload.logger.info(`Seed: admin email updated to ${ADMIN_EMAIL}`)
+  }
+
   // Always: ensure leadership (kiayi) name on existing seeded data.
   const lead = await payload.find({
     collection: 'team',
@@ -109,20 +131,6 @@ export const seed = async (payload: Payload): Promise<{ seeded: boolean }> => {
   }
 
   payload.logger.info('Seeding Majelis Nur Muhammad content...')
-
-  // Dev admin user (local only — change the password in production).
-  const users = await payload.find({ collection: 'users', limit: 1 })
-  if (users.totalDocs === 0) {
-    await payload.create({
-      collection: 'users',
-      data: {
-        email: 'hustlestudio26@gmail.com',
-        password: 'admin12345',
-        name: 'Administrator',
-        role: 'admin',
-      } as any,
-    })
-  }
 
   // --- Schedules ---
   const schedules = [

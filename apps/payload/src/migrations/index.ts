@@ -1,15 +1,9 @@
-import * as migration_20250929_111647 from './20250929_111647';
-import * as migration_20260614_141906_nurmuhammad_content from './20260614_141906_nurmuhammad_content';
+import * as migration_20260614_152936_nurmuhammad_init from './20260614_152936_nurmuhammad_init';
 
 export const migrations = [
   {
-    up: migration_20250929_111647.up,
-    down: migration_20250929_111647.down,
-    name: '20250929_111647',
-  },
-  {
-    up: migration_20260614_141906_nurmuhammad_content.up,
-    down: migration_20260614_141906_nurmuhammad_content.down,
-    name: '20260614_141906_nurmuhammad_content'
+    up: migration_20260614_152936_nurmuhammad_init.up,
+    down: migration_20260614_152936_nurmuhammad_init.down,
+    name: '20260614_152936_nurmuhammad_init'
   },
 ];

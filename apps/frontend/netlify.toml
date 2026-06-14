@@ -1,0 +1,9 @@
+# Netlify site for the Astro SSR frontend (apps/frontend).
+# In Netlify UI set Base directory = apps/frontend so this file is picked up.
+# The @astrojs/netlify adapter emits the SSR function during `astro build`.
+[build]
+  command = "pnpm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"

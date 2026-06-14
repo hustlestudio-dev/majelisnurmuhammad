@@ -37,12 +37,12 @@ const slides =
 const multiple = slides.length > 1
 ---
 <section
-  class="islamic-grid relative isolate"
+  class="relative isolate"
   data-hero
   aria-roledescription="carousel"
   aria-label="Sorotan Majelis"
 >
-  <div class="relative min-h-[80svh] w-full">
+  <div class="relative min-h-[80vh] w-full">
     {
       slides.map((slide, i) => (
         <div
@@ -63,10 +63,13 @@ const multiple = slides.length > 1
                 class="absolute inset-0 -z-10 size-full object-cover"
                 loading={i === 0 ? 'eager' : 'lazy'}
               />
-              <div class="absolute inset-0 -z-10 bg-gradient-to-b from-[#06120b]/80 via-[#0d4023]/75 to-[#06120b]/90" />
+              <div class="absolute inset-0 -z-10 bg-black/65" />
             </>
           ) : (
-            <div class="absolute inset-0 -z-10 bg-gradient-to-br from-primary via-[#0d4023] to-[#06120b]" />
+            <div
+              class="absolute inset-0 -z-10"
+              style="background: linear-gradient(135deg, #0d4023 0%, #06120b 100%)"
+            />
           )}
 
           {/* Ornaments */}
@@ -78,6 +81,8 @@ const multiple = slides.length > 1
             variant="solid"
             class="pointer-events-none absolute right-0 bottom-4 size-56 opacity-10"
           />
+
+          <div class="absolute inset-0 bg-black/45" aria-hidden="true"></div>
 
           {/* Content */}
           <div class="relative mx-auto flex max-w-3xl flex-col items-center px-4 py-24 text-center sm:px-6">

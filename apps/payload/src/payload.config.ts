@@ -1,13 +1,9 @@
-import fs from 'fs'
 import path from 'path'
-import { sqliteD1Adapter } from '@payloadcms/db-d1-sqlite'
+import { sqliteAdapter } from '@payloadcms/db-sqlite'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { buildConfig } from 'payload'
-import { id } from '@payloadcms/translations/languages/id'
 import { fileURLToPath } from 'url'
-import { CloudflareContext, getCloudflareContext } from '@opennextjs/cloudflare'
-import { GetPlatformProxyOptions } from 'wrangler'
-import { r2Storage } from '@payloadcms/storage-r2'
+import { s3Storage } from '@payloadcms/storage-s3'
 
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
@@ -19,37 +15,13 @@ import { SiteSettings } from './globals/SiteSettings'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
-const realpath = (value: string) => (fs.existsSync(value) ? fs.realpathSync(value) : undefined)
-
-const isCLI = process.argv.some((value) => realpath(value).endsWith(path.join('payload', 'bin.js')))
 const isProduction = process.env.NODE_ENV === 'production'
 
-const createLog =
-  (level: string, fn: typeof console.log) => (objOrMsg: object | string, msg?: string) => {
-    if (typeof objOrMsg === 'string') {
-      fn(JSON.stringify({ level, msg: objOrMsg }))
-    } else {
-      fn(JSON.stringify({ level, ...objOrMsg, msg: msg ?? (objOrMsg as { msg?: string }).msg }))
-    }
-  }
-
-const cloudflareLogger = {
-  level: process.env.PAYLOAD_LOG_LEVEL || 'info',
-  trace: createLog('trace', console.debug),
-  debug: createLog('debug', console.debug),
-  info: createLog('info', console.log),
-  warn: createLog('warn', console.warn),
-  error: createLog('error', console.error),
-  fatal: createLog('fatal', console.error),
-  silent: () => {},
-} as any // Use PayloadLogger type when it's exported
-
-const cloudflare =
-  isCLI || !isProduction
-    ? await getCloudflareContextFromWrangler()
-    : await getCloudflareContext({ async: true })
+const serverURL = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'
+const frontendURL = process.env.FRONTEND_URL || 'http://localhost:4321'
 
 export default buildConfig({
+  serverURL,
   admin: {
     user: Users.slug,
     importMap: {
@@ -57,41 +29,37 @@ export default buildConfig({
     },
     theme: 'light',
   },
-  i18n: {
-    fallbackLanguage: 'id',
-    supportedLanguages: { id },
-  },
   collections: [Articles, Schedules, Announcements, Team, Media, Users],
   globals: [SiteSettings],
-  cors: [process.env.FRONTEND_URL || 'http://localhost:4321'],
-  csrf: [process.env.FRONTEND_URL || 'http://localhost:4321'],
+  cors: [serverURL, frontendURL],
+  csrf: [serverURL, frontendURL],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
-  db: sqliteD1Adapter({
-    binding: cloudflare.env.D1,
-    // D1 schema is managed by migrations (see deploy:database). Dev push is
-    // unreliable on D1 (duplicate-index errors), so disable it.
-    push: false,
+  db: sqliteAdapter({
+    client: {
+      url: process.env.DATABASE_URI || 'file:./payload.db',
+      authToken: process.env.DATABASE_AUTH_TOKEN,
+    },
+    // Dev: auto-push schema for fast iteration. Prod: use migrations
+    // (run `payload migrate` during the Netlify build).
+    push: !isProduction && process.env.PAYLOAD_DB_PUSH !== 'false',
   }),
-  logger: isProduction ? cloudflareLogger : undefined,
   plugins: [
-    r2Storage({
-      bucket: cloudflare.env.R2,
+    s3Storage({
       collections: { media: true },
+      bucket: process.env.S3_BUCKET || 'nurmuhammad-media',
+      config: {
+        endpoint: process.env.S3_ENDPOINT,
+        region: process.env.S3_REGION || 'auto',
+        credentials: {
+          accessKeyId: process.env.S3_ACCESS_KEY_ID || '',
+          secretAccessKey: process.env.S3_SECRET_ACCESS_KEY || '',
+        },
+        forcePathStyle: true,
+      },
     }),
   ],
 })
-
-// Adapted from https://github.com/opennextjs/opennextjs-cloudflare/blob/d00b3a13e42e65aad76fba41774815726422cc39/packages/cloudflare/src/api/cloudflare-context.ts#L328C36-L328C46
-function getCloudflareContextFromWrangler(): Promise<CloudflareContext> {
-  return import(/* webpackIgnore: true */ `${'__wrangler'.replaceAll('_', '')}`).then(
-    ({ getPlatformProxy }) =>
-      getPlatformProxy({
-        environment: process.env.CLOUDFLARE_ENV,
-        remoteBindings: isProduction,
-      } satisfies GetPlatformProxyOptions),
-  )
-}

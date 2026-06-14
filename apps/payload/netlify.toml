@@ -1,0 +1,12 @@
+# Netlify site for the Payload CMS backend (apps/payload).
+# In Netlify UI set Base directory = apps/payload so this file is picked up.
+# Build runs `payload migrate` (Turso) then `next build`.
+[build]
+  command = "pnpm run build:netlify"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
