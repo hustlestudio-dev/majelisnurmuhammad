@@ -38,14 +38,17 @@ const present = Object.entries(requiredEnv)
   .filter(([, v]) => v !== undefined && v !== '')
   .map(([k, v]) => `${k}=${k.includes('SECRET') || k.includes('TOKEN') || k.includes('KEY') ? '<redacted>' : v}`)
 
-console.log('[payload.config] env check: present =', present)
+const banner = '\n[payload.config] ========== ENV CHECK START ==========\n'
+const presentLine = `[payload.config] present (${present.length}): ${present.join(', ')}\n`
+const missingLine = `[payload.config] MISSING (${missing.length}): ${missing.join(', ')}\n`
+const bannerEnd = '[payload.config] ========== ENV CHECK END ==========\n'
+
+process.stderr.write(banner + presentLine + missingLine + bannerEnd)
+
 if (missing.length > 0) {
-  console.error('[payload.config] MISSING env vars:', missing)
-  throw new Error(
-    `Missing required env vars: ${missing.join(', ')}. ` +
-      `Set them in Netlify UI -> Site settings -> Environment variables ` +
-      `(scope must include "Functions" / runtime, not just "Builds").`
-  )
+  const msg = `Missing required env vars: ${missing.join(', ')}. Set them in Netlify UI -> Site settings -> Environment variables (scope must include Functions / runtime, not just Builds).`
+  process.stderr.write(`[payload.config] THROW: ${msg}\n`)
+  throw new Error(msg)
 }
 
 const serverURL = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'
