@@ -1,0 +1,12 @@
+---
+import StarOrnament from './StarOrnament.astro'
+interface Props {
+  class?: string
+}
+const { class: className = '' } = Astro.props
+---
+<div class={`flex items-center justify-center gap-4 ${className}`} aria-hidden="true">
+  <span class="h-px w-16 bg-gradient-to-r from-transparent to-gold/60 sm:w-28"></span>
+  <StarOrnament class="size-6 shrink-0" />
+  <span class="h-px w-16 bg-gradient-to-l from-transparent to-gold/60 sm:w-28"></span>
+</div>

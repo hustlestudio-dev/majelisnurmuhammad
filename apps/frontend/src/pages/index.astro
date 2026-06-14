@@ -1,17 +1,166 @@
 ---
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import Hero from '@/components/Hero.astro'
+import SectionHeading from '@/components/SectionHeading.astro'
+import Divider from '@/components/Divider.astro'
+import Button from '@/components/Button.astro'
+import AnnouncementCard from '@/components/AnnouncementCard.astro'
+import ScheduleCard from '@/components/ScheduleCard.astro'
+import ArticleCard from '@/components/ArticleCard.astro'
+import StarOrnament from '@/components/StarOrnament.astro'
+import {
+  getSiteSettings,
+  getAnnouncements,
+  getSchedules,
+  getLatestArticles,
+} from '@/lib/payload'
+import { DAY_ORDER } from '@/lib/constants'
 
+const [settings, announcements, schedules, articles] = await Promise.all([
+  getSiteSettings(),
+  getAnnouncements(true),
+  getSchedules(),
+  getLatestArticles(3),
+])
+
+const weekSchedules = [...schedules]
+  .sort((a, b) => DAY_ORDER.indexOf(a.day) - DAY_ORDER.indexOf(b.day))
+  .slice(0, 4)
+
+const social = settings.social ?? {}
+const videoChannels = [
+  {
+    href: social.youtube,
+    name: 'YouTube',
+    desc: 'Rekaman kajian & ceramah terbaru.',
+  },
+  {
+    href: social.tiktok,
+    name: 'TikTok',
+    desc: 'Potongan nasihat singkat & dakwah harian.',
+  },
+].filter((c) => c.href)
 ---
+<BaseLayout settings={settings}>
+  <Hero settings={settings} />
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+  {
+    announcements.length > 0 && (
+      <section class="mx-auto max-w-6xl px-4 py-16 sm:px-6">
+        <SectionHeading
+          eyebrow="Kabar Majelis"
+          title="Pengumuman Terkini"
+          subtitle="Informasi penting seputar kegiatan dan agenda majelis."
+        />
+        <div class="mt-10 grid gap-5 sm:grid-cols-2">
+          {announcements.slice(0, 4).map((a) => (
+            <AnnouncementCard announcement={a} />
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  <section class="bg-secondary/40">
+    <div class="mx-auto max-w-6xl px-4 py-16 sm:px-6">
+      <SectionHeading
+        eyebrow="Agenda Rutin"
+        title="Jadwal Pengajian"
+        subtitle="Hadirilah majelis ilmu bersama para asatidz. Terbuka untuk umum."
+      />
+      {
+        weekSchedules.length > 0 ? (
+          <div class="mt-10 grid gap-5 md:grid-cols-2">
+            {weekSchedules.map((s) => (
+              <ScheduleCard schedule={s} />
+            ))}
+          </div>
+        ) : (
+          <p class="mt-10 text-center text-muted-foreground">Belum ada jadwal.</p>
+        )
+      }
+      <div class="mt-10 flex justify-center">
+        <Button href="/jadwal" variant="outline">Lihat Semua Jadwal</Button>
+      </div>
+    </div>
+  </section>
+
+  {
+    articles.length > 0 && (
+      <section class="mx-auto max-w-6xl px-4 py-16 sm:px-6">
+        <SectionHeading
+          eyebrow="Kajian & Ilmu"
+          title="Artikel Terbaru"
+          subtitle="Bacaan keislaman: tafsir, hadits, fiqih, dan akhlak."
+        />
+        <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {articles.map((article) => (
+            <ArticleCard article={article} />
+          ))}
+        </div>
+        <div class="mt-10 flex justify-center">
+          <Button href="/artikel" variant="outline">Jelajahi Artikel</Button>
+        </div>
+      </section>
+    )
+  }
+
+  {
+    videoChannels.length > 0 && (
+      <section class="bg-secondary/40">
+        <div class="mx-auto max-w-6xl px-4 py-16 sm:px-6">
+          <SectionHeading
+            eyebrow="Tonton & Simak"
+            title="Kanal Dakwah Kami"
+            subtitle="Ikuti kajian dan dakwah majelis di media sosial."
+          />
+          <div class="mx-auto mt-10 grid max-w-3xl gap-5 sm:grid-cols-2">
+            {videoChannels.map((c) => (
+              <a
+                href={c.href!}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="group flex flex-col items-center rounded-2xl border border-border bg-card p-8 text-center shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-lg"
+              >
+                <span class="flex size-14 items-center justify-center rounded-2xl bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+                  <svg class="size-7" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <path d="M8 5v14l11-7z" />
+                  </svg>
+                </span>
+                <h3 class="mt-4 font-display text-lg font-semibold">{c.name}</h3>
+                <p class="mt-1 text-sm text-muted-foreground">{c.desc}</p>
+                <span class="mt-4 text-sm font-semibold text-primary">Kunjungi kanal →</span>
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <section class="mx-auto max-w-6xl px-4 py-20 sm:px-6">
+    <div class="relative rounded-3xl bg-primary px-6 py-14 text-center text-primary-foreground sm:px-12">
+      <StarOrnament variant="solid" class="pointer-events-none absolute top-0 left-0 size-40 opacity-10" />
+      <StarOrnament variant="solid" class="pointer-events-none absolute right-0 bottom-0 size-48 opacity-10" />
+      <div class="relative mx-auto max-w-2xl">
+        <Divider class="mb-6" />
+        <h2 class="font-display text-3xl font-bold text-balance sm:text-4xl">
+          Mari Bergabung dalam Majelis Ilmu
+        </h2>
+        <p class="mt-4 text-pretty text-primary-foreground/85">
+          Bersama menuntut ilmu, memperkuat ukhuwah, dan menyebarkan rahmat bagi sesama.
+        </p>
+        <div class="mt-8 flex flex-wrap justify-center gap-3">
+          <Button href="/tentang" variant="gold" size="lg">Tentang Kami</Button>
+          <Button
+            href="/jadwal"
+            size="lg"
+            class="border border-white/30 bg-white/10 text-white hover:bg-white/20"
+          >
+            Ikuti Pengajian
+          </Button>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

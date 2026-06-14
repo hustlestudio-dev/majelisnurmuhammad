@@ -18,6 +18,7 @@
     "ii": "pnpm install --ignore-workspace",
     "lint": "cross-env NODE_OPTIONS=--no-deprecation next lint",
     "payload": "cross-env NODE_OPTIONS=--no-deprecation payload",
+    "seed": "cross-env NODE_OPTIONS=--no-deprecation payload run src/seed.ts",
     "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview --env=$CLOUDFLARE_ENV",
     "start": "cross-env NODE_OPTIONS=--no-deprecation next start",
     "test": "pnpm run test:int && pnpm run test:e2e",
@@ -37,7 +38,8 @@
     "payload": "3.85.1",
     "react": "19.2.1",
     "react-dom": "19.2.1",
-    "@payloadcms/db-d1-sqlite": "3.85.1"
+    "@payloadcms/db-d1-sqlite": "3.85.1",
+    "@payloadcms/translations": "3.85.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",

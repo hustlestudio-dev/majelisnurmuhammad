@@ -1,0 +1,35 @@
+---
+import { mediaUrl } from '@/lib/payload'
+import type { TeamMember } from '@/lib/types'
+
+interface Props {
+  member: TeamMember
+}
+const { member } = Astro.props
+const photo = mediaUrl(member.photo)
+const initial = member.name?.trim().charAt(0).toUpperCase() ?? '?'
+---
+<article
+  class="flex flex-col items-center rounded-2xl border border-border bg-card p-6 text-center shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-lg"
+>
+  <div class="relative">
+    <div class="absolute -inset-1 rounded-full bg-gradient-to-tr from-primary to-lime-brand opacity-70 blur-[2px]"></div>
+    {
+      photo ? (
+        <img
+          src={photo}
+          alt={member.name}
+          class="relative size-24 rounded-full object-cover ring-2 ring-card"
+          loading="lazy"
+        />
+      ) : (
+        <div class="relative flex size-24 items-center justify-center rounded-full bg-primary font-display text-3xl font-bold text-primary-foreground ring-2 ring-card">
+          {initial}
+        </div>
+      )
+    }
+  </div>
+  <h3 class="mt-4 font-display text-lg font-semibold">{member.name}</h3>
+  <p class="text-sm font-medium text-primary">{member.role}</p>
+  {member.bio && <p class="mt-2 text-sm leading-relaxed text-muted-foreground">{member.bio}</p>}
+</article>

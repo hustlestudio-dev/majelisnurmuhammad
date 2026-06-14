@@ -1,0 +1,218 @@
+---
+import Logo from './Logo.astro'
+import Button from './Button.astro'
+import StarOrnament from './StarOrnament.astro'
+import { mediaUrl } from '@/lib/payload'
+import type { SiteSettings } from '@/lib/types'
+
+interface Props {
+  settings: SiteSettings
+}
+const { settings } = Astro.props
+const logoSrc = mediaUrl(settings.logo) ?? '/logo.jpeg'
+const siteName = settings.siteName ?? 'Majelis Nur Muhammad'
+const tagline = settings.tagline ?? 'Pondok Pesantren Nur Muhammad Al-Hasany Banjaran'
+
+const raw = settings.heroSlides ?? []
+const slides =
+  raw.length > 0
+    ? raw.map((s) => ({
+        image: mediaUrl(s.image),
+        heading: s.heading,
+        subheading: s.subheading ?? null,
+        arabic: s.arabic ?? null,
+        ctaLabel: s.ctaLabel || 'Jadwal Pengajian',
+        ctaHref: s.ctaHref || '/jadwal',
+      }))
+    : [
+        {
+          image: null,
+          heading: siteName,
+          subheading: tagline,
+          arabic: settings.heroVerse?.arabic ?? 'نُورُ مُحَمَّد',
+          ctaLabel: 'Jadwal Pengajian',
+          ctaHref: '/jadwal',
+        },
+      ]
+const multiple = slides.length > 1
+---
+<section
+  class="islamic-grid relative isolate"
+  data-hero
+  aria-roledescription="carousel"
+  aria-label="Sorotan Majelis"
+>
+  <div class="relative min-h-[80svh] w-full">
+    {
+      slides.map((slide, i) => (
+        <div
+          class="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-700 ease-out data-[active]:opacity-100 data-[active]:z-10"
+          data-slide
+          data-active={i === 0 ? '' : undefined}
+          role="group"
+          aria-roledescription="slide"
+          aria-label={`${i + 1} dari ${slides.length}`}
+          aria-hidden={i === 0 ? 'false' : 'true'}
+        >
+          {/* Background */}
+          {slide.image ? (
+            <>
+              <img
+                src={slide.image}
+                alt=""
+                class="absolute inset-0 -z-10 size-full object-cover"
+                loading={i === 0 ? 'eager' : 'lazy'}
+              />
+              <div class="absolute inset-0 -z-10 bg-gradient-to-b from-[#06120b]/80 via-[#0d4023]/75 to-[#06120b]/90" />
+            </>
+          ) : (
+            <div class="absolute inset-0 -z-10 bg-gradient-to-br from-primary via-[#0d4023] to-[#06120b]" />
+          )}
+
+          {/* Ornaments */}
+          <StarOrnament
+            variant="solid"
+            class="pointer-events-none absolute top-0 left-0 size-48 opacity-10"
+          />
+          <StarOrnament
+            variant="solid"
+            class="pointer-events-none absolute right-0 bottom-4 size-56 opacity-10"
+          />
+
+          {/* Content */}
+          <div class="relative mx-auto flex max-w-3xl flex-col items-center px-4 py-24 text-center sm:px-6">
+            {!slide.image && (
+              <Logo src={logoSrc} class="mb-7 size-24 drop-shadow-lg sm:size-32" />
+            )}
+
+            <span class="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-4 py-1.5 text-xs font-semibold tracking-widest text-white/90 uppercase backdrop-blur">
+              Assalamu'alaikum Warahmatullah
+            </span>
+
+            {slide.arabic && (
+              <p
+                dir="rtl"
+                lang="ar"
+                class="font-arabic mt-6 text-3xl leading-loose text-gold [text-shadow:0_2px_10px_rgba(0,0,0,0.7)] sm:text-4xl"
+              >
+                {slide.arabic}
+              </p>
+            )}
+
+            <h1 class="mt-4 font-display text-4xl font-extrabold text-balance text-white drop-shadow-sm sm:text-6xl">
+              {slide.heading}
+            </h1>
+
+            {slide.subheading && (
+              <p class="mt-4 max-w-2xl text-base text-pretty text-white/85 [text-shadow:0_1px_8px_rgba(0,0,0,0.7)] sm:text-lg">
+                {slide.subheading}
+              </p>
+            )}
+
+            <div class="mt-9 flex flex-wrap items-center justify-center gap-3">
+              <Button href={slide.ctaHref} variant="gold" size="lg">
+                {slide.ctaLabel}
+              </Button>
+              <Button
+                href="/tentang"
+                size="lg"
+                class="border border-white/30 bg-white/10 text-white hover:bg-white/20"
+              >
+                Tentang Kami
+              </Button>
+            </div>
+          </div>
+        </div>
+      ))
+    }
+
+    {
+      multiple && (
+        <>
+          <button
+            type="button"
+            data-hero-prev
+            aria-label="Slide sebelumnya"
+            class="absolute top-1/2 left-3 z-20 flex size-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/30 bg-black/20 text-white backdrop-blur transition hover:bg-black/40 sm:left-6"
+          >
+            <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+          </button>
+          <button
+            type="button"
+            data-hero-next
+            aria-label="Slide berikutnya"
+            class="absolute top-1/2 right-3 z-20 flex size-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/30 bg-black/20 text-white backdrop-blur transition hover:bg-black/40 sm:right-6"
+          >
+            <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+          </button>
+
+          <div class="absolute bottom-6 left-1/2 z-20 flex -translate-x-1/2 gap-2.5">
+            {slides.map((_, i) => (
+              <button
+                type="button"
+                data-hero-dot
+                aria-label={`Ke slide ${i + 1}`}
+                class="size-2.5 rounded-full bg-white/40 transition-all data-[active]:w-7 data-[active]:bg-gold"
+                data-active={i === 0 ? '' : undefined}
+              />
+            ))}
+          </div>
+        </>
+      )
+    }
+  </div>
+</section>
+
+{
+  multiple && (
+    <script is:inline>
+      ;(() => {
+        const root = document.querySelector('[data-hero]')
+        if (!root) return
+        const slides = [...root.querySelectorAll('[data-slide]')]
+        const dots = [...root.querySelectorAll('[data-hero-dot]')]
+        let i = 0
+        let timer
+        const show = (n) => {
+          i = (n + slides.length) % slides.length
+          slides.forEach((s, k) => {
+            if (k === i) {
+              s.setAttribute('data-active', '')
+              s.setAttribute('aria-hidden', 'false')
+            } else {
+              s.removeAttribute('data-active')
+              s.setAttribute('aria-hidden', 'true')
+            }
+          })
+          dots.forEach((d, k) =>
+            k === i ? d.setAttribute('data-active', '') : d.removeAttribute('data-active'),
+          )
+        }
+        const next = () => show(i + 1)
+        const prev = () => show(i - 1)
+        const start = () => {
+          stop()
+          timer = setInterval(next, 6000)
+        }
+        const stop = () => timer && clearInterval(timer)
+        root.querySelector('[data-hero-next]')?.addEventListener('click', () => {
+          next()
+          start()
+        })
+        root.querySelector('[data-hero-prev]')?.addEventListener('click', () => {
+          prev()
+          start()
+        })
+        dots.forEach((d, k) =>
+          d.addEventListener('click', () => {
+            show(k)
+            start()
+          }),
+        )
+        root.addEventListener('mouseenter', stop)
+        root.addEventListener('mouseleave', start)
+        start()
+      })()
+    </script>
+  )
+}

@@ -1,0 +1,39 @@
+---
+interface Props {
+  eyebrow?: string
+  title: string
+  subtitle?: string
+  align?: 'center' | 'left'
+  class?: string
+}
+const {
+  eyebrow,
+  title,
+  subtitle,
+  align = 'center',
+  class: className = '',
+} = Astro.props
+const isCenter = align === 'center'
+---
+<div
+  class={`${isCenter ? 'mx-auto max-w-2xl text-center' : 'max-w-2xl text-left'} ${className}`}
+>
+  {
+    eyebrow && (
+      <span class="mb-3 inline-block rounded-full bg-accent px-4 py-1 text-xs font-semibold tracking-widest text-primary uppercase">
+        {eyebrow}
+      </span>
+    )
+  }
+  <h2 class="text-3xl font-bold text-balance sm:text-4xl">{title}</h2>
+  {
+    subtitle && (
+      <p class="mt-4 text-base leading-relaxed text-pretty text-muted-foreground">
+        {subtitle}
+      </p>
+    )
+  }
+  <div class={`mt-5 flex ${isCenter ? 'justify-center' : ''}`}>
+    <span class="h-1 w-20 rounded-full bg-gradient-to-r from-primary to-lime-brand"></span>
+  </div>
+</div>

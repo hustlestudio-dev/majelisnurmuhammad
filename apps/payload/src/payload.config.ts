@@ -3,6 +3,7 @@ import path from 'path'
 import { sqliteD1Adapter } from '@payloadcms/db-d1-sqlite'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { buildConfig } from 'payload'
+import { id } from '@payloadcms/translations/languages/id'
 import { fileURLToPath } from 'url'
 import { CloudflareContext, getCloudflareContext } from '@opennextjs/cloudflare'
 import { GetPlatformProxyOptions } from 'wrangler'
@@ -10,7 +11,11 @@ import { r2Storage } from '@payloadcms/storage-r2'
 
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
-import migrations from './db/migrations'
+import { Articles } from './collections/Articles'
+import { Schedules } from './collections/Schedules'
+import { Announcements } from './collections/Announcements'
+import { Team } from './collections/Team'
+import { SiteSettings } from './globals/SiteSettings'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -50,8 +55,16 @@ export default buildConfig({
     importMap: {
       baseDir: path.resolve(dirname),
     },
+    theme: 'light',
   },
-  collections: [Users, Media],
+  i18n: {
+    fallbackLanguage: 'id',
+    supportedLanguages: { id },
+  },
+  collections: [Articles, Schedules, Announcements, Team, Media, Users],
+  globals: [SiteSettings],
+  cors: [process.env.FRONTEND_URL || 'http://localhost:4321'],
+  csrf: [process.env.FRONTEND_URL || 'http://localhost:4321'],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
@@ -59,6 +72,9 @@ export default buildConfig({
   },
   db: sqliteD1Adapter({
     binding: cloudflare.env.D1,
+    // D1 schema is managed by migrations (see deploy:database). Dev push is
+    // unreliable on D1 (duplicate-index errors), so disable it.
+    push: false,
   }),
   logger: isProduction ? cloudflareLogger : undefined,
   plugins: [

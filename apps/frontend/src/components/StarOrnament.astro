@@ -1,0 +1,38 @@
+---
+// Rub el Hizb (۞) — two overlapping squares forming an 8-point star.
+// Echoes the pondok logo's star motif.
+interface Props {
+  class?: string
+  variant?: 'outline' | 'solid'
+}
+const { class: className = '', variant = 'outline' } = Astro.props
+---
+<svg
+  viewBox="0 0 100 100"
+  class={className}
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  aria-hidden="true"
+>
+  {variant === 'solid' ? (
+    <>
+      <polygon points="50,3 97,50 50,97 3,50" class="fill-lime-brand/80" />
+      <polygon points="18,18 82,18 82,82 18,82" class="fill-primary" />
+    </>
+  ) : (
+    <>
+      <polygon
+        points="50,4 96,50 50,96 4,50"
+        class="stroke-lime-brand"
+        stroke-width="3.5"
+        stroke-linejoin="round"
+      />
+      <polygon
+        points="18,18 82,18 82,82 18,82"
+        class="stroke-primary"
+        stroke-width="3.5"
+        stroke-linejoin="round"
+      />
+    </>
+  )}
+</svg>

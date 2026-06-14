@@ -1,0 +1,95 @@
+---
+import Logo from './Logo.astro'
+import ThemeToggle from './ThemeToggle.astro'
+import { NAV_LINKS } from '@/lib/constants'
+import { mediaUrl } from '@/lib/payload'
+import type { SiteSettings } from '@/lib/types'
+
+interface Props {
+  settings: SiteSettings
+}
+const { settings } = Astro.props
+const pathname = Astro.url.pathname
+const isActive = (href: string) =>
+  href === '/' ? pathname === '/' : pathname.startsWith(href)
+const logoSrc = mediaUrl(settings.logo) ?? '/logo.jpeg'
+const siteName = settings.siteName ?? 'Majelis Nur Muhammad'
+---
+<header
+  class="sticky top-0 z-50 border-b border-border/70 bg-background/80 backdrop-blur-md"
+>
+  <nav class="mx-auto flex h-18 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
+    <a href="/" class="flex items-center gap-3">
+      <Logo src={logoSrc} class="size-11" />
+      <span class="flex flex-col leading-tight">
+        <span class="font-display text-base font-bold text-foreground sm:text-lg">{siteName}</span>
+        <span class="hidden text-xs text-muted-foreground sm:block">Al-Hasany Banjaran</span>
+      </span>
+    </a>
+
+    <div class="hidden items-center gap-1 md:flex">
+      {
+        NAV_LINKS.map((link) => (
+          <a
+            href={link.href}
+            class:list={[
+              'rounded-full px-4 py-2 text-sm font-medium transition-colors',
+              isActive(link.href)
+                ? 'bg-primary/10 text-primary'
+                : 'text-foreground/75 hover:bg-accent hover:text-primary',
+            ]}
+          >
+            {link.label}
+          </a>
+        ))
+      }
+    </div>
+
+    <div class="flex items-center gap-2">
+      <ThemeToggle />
+      <button
+        id="mobile-menu-btn"
+        type="button"
+        aria-label="Buka menu"
+        aria-expanded="false"
+        class="inline-flex size-10 items-center justify-center rounded-full border border-border text-foreground/80 hover:bg-accent md:hidden"
+      >
+        <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <path d="M3 6h18M3 12h18M3 18h18"></path>
+        </svg>
+      </button>
+    </div>
+  </nav>
+
+  <div id="mobile-menu" class="hidden border-t border-border/70 bg-background md:hidden">
+    <div class="space-y-1 px-4 py-3">
+      {
+        NAV_LINKS.map((link) => (
+          <a
+            href={link.href}
+            class:list={[
+              'block rounded-lg px-4 py-2.5 text-sm font-medium',
+              isActive(link.href)
+                ? 'bg-primary/10 text-primary'
+                : 'text-foreground/80 hover:bg-accent',
+            ]}
+          >
+            {link.label}
+          </a>
+        ))
+      }
+    </div>
+  </div>
+</header>
+
+<script is:inline>
+  (() => {
+    const btn = document.getElementById('mobile-menu-btn')
+    const menu = document.getElementById('mobile-menu')
+    if (!btn || !menu) return
+    btn.addEventListener('click', () => {
+      const open = menu.classList.toggle('hidden')
+      btn.setAttribute('aria-expanded', String(!open))
+    })
+  })()
+</script>

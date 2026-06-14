@@ -1,0 +1,189 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import PageHeader from '@/components/PageHeader.astro'
+import SectionHeading from '@/components/SectionHeading.astro'
+import TeamCard from '@/components/TeamCard.astro'
+import Divider from '@/components/Divider.astro'
+import StarOrnament from '@/components/StarOrnament.astro'
+import Button from '@/components/Button.astro'
+import { getSiteSettings, getTeam } from '@/lib/payload'
+
+const [settings, team] = await Promise.all([getSiteSettings(), getTeam()])
+
+const visiMisi = [
+  {
+    title: 'Visi',
+    body: 'Menjadi majelis taklim yang menebar cahaya ilmu, memperkokoh akidah, dan membentuk pribadi berakhlak mulia sesuai tuntunan Al-Qur’an dan Sunnah.',
+  },
+  {
+    title: 'Misi',
+    body: 'Menyelenggarakan kajian rutin, membina ukhuwah islamiyah, serta menghidupkan amal saleh di tengah masyarakat dengan ikhlas dan istiqamah.',
+  },
+]
+
+const nilai = [
+  { title: 'Ilmu', desc: 'Menuntut dan menyebarkan ilmu yang bermanfaat.' },
+  { title: 'Ukhuwah', desc: 'Mempererat persaudaraan sesama muslim.' },
+  { title: 'Akhlak', desc: 'Meneladani akhlak mulia Rasulullah ﷺ.' },
+  { title: 'Istiqamah', desc: 'Konsisten dalam ketaatan dan kebaikan.' },
+]
+
+const donation = settings.donation ?? {}
+const hasDonation = donation.bankName || donation.accountNumber
+const waLink = settings.whatsapp
+  ? `https://wa.me/${settings.whatsapp.replace(/[^0-9]/g, '')}`
+  : null
+---
+<BaseLayout
+  title="Tentang Kami"
+  description={settings.tagline ?? 'Profil Majelis Nur Muhammad — visi, misi, dan pengurus majelis.'}
+  settings={settings}
+>
+  <PageHeader
+    title="Tentang Majelis"
+    subtitle={settings.tagline ?? 'Mengenal lebih dekat Majelis Nur Muhammad.'}
+  />
+
+  <!-- Profil -->
+  <section class="mx-auto max-w-3xl px-4 py-16 text-center sm:px-6">
+    <p class="font-arabic text-2xl text-primary" dir="rtl">بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ</p>
+    <Divider class="my-6" />
+    <p class="text-lg leading-relaxed text-pretty text-foreground/80">
+      <strong class="text-primary">{settings.siteName ?? 'Majelis Nur Muhammad'}</strong>
+      adalah majelis taklim yang lahir dari kecintaan terhadap ilmu dan dakwah. Kami
+      menghadirkan kajian keislaman yang mudah dipahami, menyejukkan hati, dan menuntun
+      langkah menuju ridha Allah ﷻ. Terbuka untuk seluruh kalangan, tanpa memandang usia
+      maupun latar belakang.
+    </p>
+  </section>
+
+  <!-- Visi Misi -->
+  <section class="bg-secondary/40">
+    <div class="mx-auto max-w-5xl px-4 py-16 sm:px-6">
+      <div class="grid gap-6 md:grid-cols-2">
+        {
+          visiMisi.map((v) => (
+            <div class="relative rounded-2xl border border-border bg-card p-8 shadow-sm">
+              <StarOrnament class="pointer-events-none absolute top-0 right-0 size-28 opacity-[0.06]" />
+              <h2 class="font-display text-2xl font-bold text-primary">{v.title}</h2>
+              <p class="mt-3 leading-relaxed text-pretty text-muted-foreground">{v.body}</p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Nilai -->
+  <section class="mx-auto max-w-6xl px-4 py-16 sm:px-6">
+    <SectionHeading
+      eyebrow="Prinsip Kami"
+      title="Nilai-Nilai Majelis"
+      subtitle="Pondasi yang menjiwai setiap kegiatan dan langkah kami."
+    />
+    <div class="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+      {
+        nilai.map((n) => (
+          <div class="rounded-2xl border border-border bg-card p-6 text-center shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-lg">
+            <span class="mx-auto flex size-12 items-center justify-center rounded-xl bg-primary/10 font-display text-lg font-bold text-primary">
+              {n.title.charAt(0)}
+            </span>
+            <h3 class="mt-4 font-display font-semibold">{n.title}</h3>
+            <p class="mt-1 text-sm text-muted-foreground">{n.desc}</p>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- Pengurus -->
+  {
+    team.length > 0 && (
+      <section class="bg-secondary/40">
+        <div class="mx-auto max-w-6xl px-4 py-16 sm:px-6">
+          <SectionHeading
+            eyebrow="Pengurus"
+            title="Susunan Pengurus"
+            subtitle="Mereka yang berkhidmat melayani majelis dengan ikhlas."
+          />
+          <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {team.map((member) => (
+              <TeamCard member={member} />
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <!-- Donasi / Kontak -->
+  <section class="mx-auto max-w-4xl px-4 py-20 sm:px-6">
+    <div class="relative rounded-3xl bg-primary px-6 py-14 text-center text-primary-foreground sm:px-12">
+      <StarOrnament variant="solid" class="pointer-events-none absolute top-0 left-0 size-40 opacity-10" />
+      <StarOrnament variant="solid" class="pointer-events-none absolute right-0 bottom-0 size-48 opacity-10" />
+      <div class="relative mx-auto max-w-2xl">
+        <Divider class="mb-6" />
+        <h2 class="font-display text-3xl font-bold text-balance sm:text-4xl">
+          Dukung Dakwah & Kegiatan Majelis
+        </h2>
+        <p class="mt-4 text-pretty text-primary-foreground/85">
+          Setiap infak dan sedekah yang Anda titipkan menjadi bagian dari amal jariyah
+          untuk keberlangsungan majelis ilmu ini.
+        </p>
+
+        {
+          hasDonation && (
+            <div class="mx-auto mt-8 max-w-sm rounded-2xl bg-white/10 p-6 text-left ring-1 ring-white/20 backdrop-blur">
+              {donation.bankName && (
+                <p class="text-sm text-primary-foreground/70">
+                  Bank
+                  <span class="float-right font-semibold text-white">{donation.bankName}</span>
+                </p>
+              )}
+              {donation.accountNumber && (
+                <p class="mt-3 text-sm text-primary-foreground/70">
+                  No. Rekening
+                  <span class="float-right font-mono font-semibold text-white">
+                    {donation.accountNumber}
+                  </span>
+                </p>
+              )}
+              {donation.accountHolder && (
+                <p class="mt-3 text-sm text-primary-foreground/70">
+                  a.n.
+                  <span class="float-right font-semibold text-white">
+                    {donation.accountHolder}
+                  </span>
+                </p>
+              )}
+              {donation.note && (
+                <p class="mt-4 border-t border-white/15 pt-3 text-xs text-primary-foreground/70">
+                  {donation.note}
+                </p>
+              )}
+            </div>
+          )
+        }
+
+        <div class="mt-8 flex flex-wrap justify-center gap-3">
+          {waLink && (
+            <Button href={waLink} variant="gold" size="lg">Hubungi via WhatsApp</Button>
+          )}
+          <Button
+            href="/jadwal"
+            size="lg"
+            class="border border-white/30 bg-white/10 text-white hover:bg-white/20"
+          >
+            Ikuti Pengajian
+          </Button>
+        </div>
+
+        {
+          settings.address && (
+            <p class="mt-8 text-sm text-primary-foreground/75">{settings.address}</p>
+          )
+        }
+      </div>
+    </div>
+  </section>
+</BaseLayout>

@@ -67,8 +67,12 @@ export interface Config {
   };
   blocks: {};
   collections: {
-    users: User;
+    articles: Article;
+    schedules: Schedule;
+    announcements: Announcement;
+    team: Team;
     media: Media;
+    users: User;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -76,8 +80,12 @@ export interface Config {
   };
   collectionsJoins: {};
   collectionsSelect: {
-    users: UsersSelect<false> | UsersSelect<true>;
+    articles: ArticlesSelect<false> | ArticlesSelect<true>;
+    schedules: SchedulesSelect<false> | SchedulesSelect<true>;
+    announcements: AnnouncementsSelect<false> | AnnouncementsSelect<true>;
+    team: TeamSelect<false> | TeamSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    users: UsersSelect<false> | UsersSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -87,8 +95,12 @@ export interface Config {
     defaultIDType: number;
   };
   fallbackLocale: null;
-  globals: {};
-  globalsSelect: {};
+  globals: {
+    'site-settings': SiteSetting;
+  };
+  globalsSelect: {
+    'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
+  };
   locale: null;
   widgets: {
     collections: CollectionsWidget;
@@ -119,10 +131,147 @@ export interface UserAuthOperations {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "articles".
+ */
+export interface Article {
+  id: number;
+  title: string;
+  /**
+   * Otomatis dari judul bila dikosongkan.
+   */
+  slug?: string | null;
+  category: 'tafsir' | 'hadits' | 'fiqih' | 'akhlak' | 'umum';
+  /**
+   * Cuplikan singkat untuk kartu artikel & SEO.
+   */
+  excerpt?: string | null;
+  coverImage?: (number | null) | Media;
+  content: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  tags?:
+    | {
+        tag?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  author?: string | null;
+  publishedDate?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "media".
+ */
+export interface Media {
+  id: number;
+  /**
+   * Deskripsi gambar untuk aksesibilitas dan SEO.
+   */
+  alt: string;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "schedules".
+ */
+export interface Schedule {
+  id: number;
+  title: string;
+  day: 'ahad' | 'senin' | 'selasa' | 'rabu' | 'kamis' | 'jumat' | 'sabtu';
+  /**
+   * Contoh: 19:30 atau Ba'da Maghrib.
+   */
+  timeStart?: string | null;
+  /**
+   * Opsional.
+   */
+  timeEnd?: string | null;
+  ustadz?: string | null;
+  kitab?: string | null;
+  location?: string | null;
+  description?: string | null;
+  recurring?: boolean | null;
+  order?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "announcements".
+ */
+export interface Announcement {
+  id: number;
+  title: string;
+  body: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  date?: string | null;
+  pinned?: boolean | null;
+  /**
+   * Opsional. Kosongkan bila tanpa batas waktu.
+   */
+  expiresAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "team".
+ */
+export interface Team {
+  id: number;
+  name: string;
+  role: string;
+  photo?: (number | null) | Media;
+  bio?: string | null;
+  order?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users".
  */
 export interface User {
   id: number;
+  name?: string | null;
+  role: 'admin' | 'editor';
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -141,23 +290,6 @@ export interface User {
     | null;
   password?: string | null;
   collection: 'users';
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "media".
- */
-export interface Media {
-  id: number;
-  alt: string;
-  updatedAt: string;
-  createdAt: string;
-  url?: string | null;
-  thumbnailURL?: string | null;
-  filename?: string | null;
-  mimeType?: string | null;
-  filesize?: number | null;
-  width?: number | null;
-  height?: number | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -184,12 +316,28 @@ export interface PayloadLockedDocument {
   id: number;
   document?:
     | ({
-        relationTo: 'users';
-        value: number | User;
+        relationTo: 'articles';
+        value: number | Article;
+      } | null)
+    | ({
+        relationTo: 'schedules';
+        value: number | Schedule;
+      } | null)
+    | ({
+        relationTo: 'announcements';
+        value: number | Announcement;
+      } | null)
+    | ({
+        relationTo: 'team';
+        value: number | Team;
       } | null)
     | ({
         relationTo: 'media';
         value: number | Media;
+      } | null)
+    | ({
+        relationTo: 'users';
+        value: number | User;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -235,25 +383,71 @@ export interface PayloadMigration {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "users_select".
+ * via the `definition` "articles_select".
  */
-export interface UsersSelect<T extends boolean = true> {
-  updatedAt?: T;
-  createdAt?: T;
-  email?: T;
-  resetPasswordToken?: T;
-  resetPasswordExpiration?: T;
-  salt?: T;
-  hash?: T;
-  loginAttempts?: T;
-  lockUntil?: T;
-  sessions?:
+export interface ArticlesSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  category?: T;
+  excerpt?: T;
+  coverImage?: T;
+  content?: T;
+  tags?:
     | T
     | {
+        tag?: T;
         id?: T;
-        createdAt?: T;
-        expiresAt?: T;
       };
+  author?: T;
+  publishedDate?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "schedules_select".
+ */
+export interface SchedulesSelect<T extends boolean = true> {
+  title?: T;
+  day?: T;
+  timeStart?: T;
+  timeEnd?: T;
+  ustadz?: T;
+  kitab?: T;
+  location?: T;
+  description?: T;
+  recurring?: T;
+  order?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "announcements_select".
+ */
+export interface AnnouncementsSelect<T extends boolean = true> {
+  title?: T;
+  body?: T;
+  date?: T;
+  pinned?: T;
+  expiresAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "team_select".
+ */
+export interface TeamSelect<T extends boolean = true> {
+  name?: T;
+  role?: T;
+  photo?: T;
+  bio?: T;
+  order?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -270,6 +464,30 @@ export interface MediaSelect<T extends boolean = true> {
   filesize?: T;
   width?: T;
   height?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "users_select".
+ */
+export interface UsersSelect<T extends boolean = true> {
+  name?: T;
+  role?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  email?: T;
+  resetPasswordToken?: T;
+  resetPasswordExpiration?: T;
+  salt?: T;
+  hash?: T;
+  loginAttempts?: T;
+  lockUntil?: T;
+  sessions?:
+    | T
+    | {
+        id?: T;
+        createdAt?: T;
+        expiresAt?: T;
+      };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -310,6 +528,103 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   batch?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings".
+ */
+export interface SiteSetting {
+  id: number;
+  siteName: string;
+  tagline?: string | null;
+  logo?: (number | null) | Media;
+  /**
+   * Slider di bagian atas beranda. Kosongkan untuk memakai tampilan ayat default.
+   */
+  heroSlides?:
+    | {
+        image?: (number | null) | Media;
+        heading: string;
+        subheading?: string | null;
+        arabic?: string | null;
+        ctaLabel?: string | null;
+        ctaHref?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  heroVerse?: {
+    arabic?: string | null;
+    translation?: string | null;
+    reference?: string | null;
+  };
+  address?: string | null;
+  whatsapp?: string | null;
+  email?: string | null;
+  social?: {
+    youtube?: string | null;
+    tiktok?: string | null;
+    instagram?: string | null;
+    facebook?: string | null;
+  };
+  donation?: {
+    bankName?: string | null;
+    accountNumber?: string | null;
+    accountHolder?: string | null;
+    note?: string | null;
+  };
+  footerText?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings_select".
+ */
+export interface SiteSettingsSelect<T extends boolean = true> {
+  siteName?: T;
+  tagline?: T;
+  logo?: T;
+  heroSlides?:
+    | T
+    | {
+        image?: T;
+        heading?: T;
+        subheading?: T;
+        arabic?: T;
+        ctaLabel?: T;
+        ctaHref?: T;
+        id?: T;
+      };
+  heroVerse?:
+    | T
+    | {
+        arabic?: T;
+        translation?: T;
+        reference?: T;
+      };
+  address?: T;
+  whatsapp?: T;
+  email?: T;
+  social?:
+    | T
+    | {
+        youtube?: T;
+        tiktok?: T;
+        instagram?: T;
+        facebook?: T;
+      };
+  donation?:
+    | T
+    | {
+        bankName?: T;
+        accountNumber?: T;
+        accountHolder?: T;
+        note?: T;
+      };
+  footerText?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

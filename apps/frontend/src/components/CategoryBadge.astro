@@ -1,0 +1,14 @@
+---
+import { CATEGORY_LABELS } from '@/lib/constants'
+interface Props {
+  category: string
+  class?: string
+}
+const { category, class: className = '' } = Astro.props
+const label = CATEGORY_LABELS[category] ?? category
+---
+<span
+  class={`inline-flex items-center rounded-full bg-secondary px-3 py-1 text-xs font-semibold tracking-wide text-secondary-foreground uppercase ${className}`}
+>
+  {label}
+</span>

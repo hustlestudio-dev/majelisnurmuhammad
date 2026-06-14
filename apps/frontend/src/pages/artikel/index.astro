@@ -1,0 +1,63 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import PageHeader from '@/components/PageHeader.astro'
+import ArticleCard from '@/components/ArticleCard.astro'
+import { getArticles } from '@/lib/payload'
+import { CATEGORY_LABELS } from '@/lib/constants'
+import type { ArticleCategory } from '@/lib/types'
+
+const params = Astro.url.searchParams
+const active = (params.get('kategori') ?? 'all') as ArticleCategory | 'all'
+const articles = await getArticles(active)
+
+const filters: { value: ArticleCategory | 'all'; label: string }[] = [
+  { value: 'all', label: 'Semua' },
+  ...Object.entries(CATEGORY_LABELS).map(([value, label]) => ({
+    value: value as ArticleCategory,
+    label,
+  })),
+]
+---
+<BaseLayout
+  title="Artikel"
+  description="Kumpulan artikel keislaman Majelis Nur Muhammad: tafsir, hadits, fiqih, dan akhlak."
+>
+  <PageHeader
+    title="Artikel & Kajian"
+    subtitle="Menambah ilmu dan memperdalam pemahaman agama."
+  />
+
+  <div class="mx-auto max-w-6xl px-4 py-16 sm:px-6">
+    <div class="mb-10 flex flex-wrap justify-center gap-2">
+      {
+        filters.map((f) => (
+          <a
+            href={f.value === 'all' ? '/artikel' : `/artikel?kategori=${f.value}`}
+            class:list={[
+              'rounded-full px-4 py-2 text-sm font-medium transition-colors',
+              active === f.value
+                ? 'bg-primary text-primary-foreground'
+                : 'border border-border text-foreground/75 hover:bg-accent hover:text-primary',
+            ]}
+          >
+            {f.label}
+          </a>
+        ))
+      }
+    </div>
+
+    {
+      articles.length > 0 ? (
+        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {articles.map((article) => (
+            <ArticleCard article={article} />
+          ))}
+        </div>
+      ) : (
+        <p class="text-center text-muted-foreground">
+          Belum ada artikel pada kategori ini.
+        </p>
+      )
+    }
+  </div>
+</BaseLayout>

@@ -4,6 +4,10 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
+  --font-sans: "Plus Jakarta Sans Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Poppins", "Plus Jakarta Sans Variable", ui-sans-serif, sans-serif;
+  --font-arabic: "Amiri", "Scheherazade New", serif;
+
   --animate-accordion-down: accordion-down 0.2s ease-out;
   --animate-accordion-up: accordion-up 0.2s ease-out;
 
@@ -22,6 +26,15 @@
     }
     to {
       height: 0;
+    }
+  }
+
+  @keyframes float-slow {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
     }
   }
 }
@@ -43,6 +56,9 @@
   --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
+  --color-gold: var(--gold);
+  --color-gold-foreground: var(--gold-foreground);
+  --color-lime-brand: var(--lime-brand);
   --color-info: var(--info);
   --color-info-foreground: var(--info-foreground);
   --color-success: var(--success);
@@ -74,94 +90,129 @@
 }
 
 :root {
-  --background: var(--color-white);
-  --foreground: var(--color-neutral-950);
-  --card: var(--color-white);
-  --card-foreground: var(--color-neutral-950);
-  --popover: var(--color-white);
-  --popover-foreground: var(--color-neutral-950);
-  --primary: var(--color-blue-700);
-  --primary-foreground: var(--color-neutral-50);
-  --primary-accent: var(--color-blue-700);
-  --secondary: var(--color-neutral-200);
-  --secondary-foreground: var(--color-neutral-950);
-  --secondary-accent: var(--color-neutral-950);
-  --muted: var(--color-neutral-100);
-  --muted-foreground: var(--color-neutral-600);
-  --accent: var(--color-neutral-100);
-  --accent-foreground: var(--color-neutral-900);
+  /* Light — cream paper + emerald + gold (logo palette) */
+  --background: #f6faf1;
+  --foreground: #11271b;
+  --card: #ffffff;
+  --card-foreground: #11271b;
+  --popover: #ffffff;
+  --popover-foreground: #11271b;
+  --primary: #166534;
+  --primary-foreground: #ffffff;
+  --primary-accent: #15803d;
+  --secondary: #dcf5dc;
+  --secondary-foreground: #14532d;
+  --secondary-accent: #166534;
+  --muted: #eaf3e4;
+  --muted-foreground: #54675b;
+  --accent: #e6f3dc;
+  --accent-foreground: #1f3d12;
+  --gold: #b8902a;
+  --gold-foreground: #ffffff;
+  --lime-brand: #84cc16;
   --info: var(--color-sky-300);
   --info-foreground: var(--color-sky-950);
-  --success: var(--color-green-300);
-  --success-foreground: var(--color-green-950);
+  --success: #16a34a;
+  --success-foreground: #ffffff;
   --warning: var(--color-amber-300);
   --warning-foreground: var(--color-amber-950);
   --error: var(--color-red-700);
   --error-foreground: var(--color-neutral-50);
-  --border: var(--color-neutral-200);
-  --input: var(--color-neutral-200);
-  --outline: var(--color-neutral-400);
-  --radius: 0.625rem;
+  --border: #d6e7cc;
+  --input: #d6e7cc;
+  --outline: #166534;
+  --radius: 0.85rem;
 
   /* sidebar variables */
-  --sidebar-background: var(--color-neutral-50);
-  --sidebar-foreground: var(--color-neutral-950);
-  --sidebar-primary: var(--color-blue-700);
-  --sidebar-primary-foreground: var(--color-neutral-50);
-  --sidebar-accent: var(--color-neutral-100);
-  --sidebar-accent-foreground: var(--color-neutral-900);
-  --sidebar-border: var(--color-neutral-200);
-  --sidebar-outline: var(--color-neutral-400);
+  --sidebar-background: #f0f6ea;
+  --sidebar-foreground: #11271b;
+  --sidebar-primary: #166534;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #e6f3dc;
+  --sidebar-accent-foreground: #1f3d12;
+  --sidebar-border: #d6e7cc;
+  --sidebar-outline: #166534;
 }
 
 .dark {
-  --background: var(--color-neutral-950);
-  --foreground: var(--color-neutral-50);
-  --card: var(--color-neutral-900);
-  --card-foreground: var(--color-neutral-50);
-  --popover: var(--color-neutral-800);
-  --popover-foreground: var(--color-neutral-50);
-  --primary: var(--color-blue-700);
-  --primary-foreground: var(--color-neutral-50);
-  --primary-accent: var(--color-blue-400);
-  --secondary: var(--color-neutral-800);
-  --secondary-foreground: var(--color-neutral-50);
-  --secondary-accent: var(--color-neutral-50);
-  --muted: var(--color-neutral-800);
-  --muted-foreground: var(--color-neutral-400);
-  --accent: var(--color-neutral-700);
-  --accent-foreground: var(--color-neutral-100);
+  /* Dark — deep forest + luminous green + gold */
+  --background: #08140d;
+  --foreground: #e7f0e6;
+  --card: #0e2317;
+  --card-foreground: #e7f0e6;
+  --popover: #0e2317;
+  --popover-foreground: #e7f0e6;
+  --primary: #22c55e;
+  --primary-foreground: #04130b;
+  --primary-accent: #4ade80;
+  --secondary: #13301f;
+  --secondary-foreground: #d6ecd6;
+  --secondary-accent: #4ade80;
+  --muted: #122a1c;
+  --muted-foreground: #93ab9c;
+  --accent: #15321f;
+  --accent-foreground: #d9eccf;
+  --gold: #e3c766;
+  --gold-foreground: #12100a;
+  --lime-brand: #a3e635;
   --info: var(--color-sky-300);
   --info-foreground: var(--color-sky-950);
-  --success: var(--color-green-300);
-  --success-foreground: var(--color-green-950);
+  --success: #4ade80;
+  --success-foreground: #04130b;
   --warning: var(--color-amber-300);
   --warning-foreground: var(--color-amber-950);
   --error: var(--color-red-800);
   --error-foreground: var(--color-neutral-50);
-  --border: --alpha(var(--color-neutral-50) / 10%);
-  --input: --alpha(var(--color-neutral-50) / 15%);
-  --outline: var(--color-neutral-500);
+  --border: --alpha(var(--color-white) / 12%);
+  --input: --alpha(var(--color-white) / 16%);
+  --outline: #4ade80;
 
   /* sidebars variables */
-  --sidebar-background: var(--color-neutral-900);
-  --sidebar-foreground: var(--color-neutral-50);
-  --sidebar-primary: var(--color-blue-700);
-  --sidebar-primary-foreground: var(--color-neutral-50);
-  --sidebar-accent: var(--color-neutral-800);
-  --sidebar-accent-foreground: var(--color-neutral-100);
-  --sidebar-border: var(--color-neutral-800);
-  --sidebar-outline: var(--color-neutral-600);
+  --sidebar-background: #0e2317;
+  --sidebar-foreground: #e7f0e6;
+  --sidebar-primary: #22c55e;
+  --sidebar-primary-foreground: #04130b;
+  --sidebar-accent: #15321f;
+  --sidebar-accent-foreground: #d9eccf;
+  --sidebar-border: --alpha(var(--color-white) / 12%);
+  --sidebar-outline: #4ade80;
 }
 
 @layer base {
   * {
     @apply border-border outline-outline/50;
   }
+  html {
+    scroll-behavior: smooth;
+  }
   body {
     @apply bg-background text-foreground scheme-light dark:scheme-dark;
+    font-family: var(--font-sans);
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    @apply tracking-tight;
   }
   button {
     @apply cursor-pointer;
+  }
+  ::selection {
+    background-color: color-mix(in oklab, var(--primary) 25%, transparent);
+  }
+}
+
+@layer components {
+  .font-arabic {
+    font-family: var(--font-arabic);
+  }
+  /* Subtle geometric backdrop using the brand greens */
+  .islamic-grid {
+    background-color: var(--background);
+    background-image:
+      radial-gradient(circle at 1px 1px, color-mix(in oklab, var(--primary) 14%, transparent) 1.5px, transparent 0);
+    background-size: 22px 22px;
+  }
+  .text-gradient-emerald {
+    color: var(--primary);
   }
 }

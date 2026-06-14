@@ -1,0 +1,27 @@
+---
+import { formatDateID } from '@/lib/constants'
+import { richTextToPlain } from '@/lib/richtext'
+import type { Announcement } from '@/lib/types'
+
+interface Props {
+  announcement: Announcement
+}
+const { announcement } = Astro.props
+const summary = richTextToPlain(announcement.body, 180)
+---
+<article
+  class="rounded-2xl border border-border bg-card p-5 shadow-sm transition-all duration-300 hover:border-primary/30 hover:shadow-lg"
+>
+  <div class="flex items-center gap-2">
+    {
+      announcement.pinned && (
+        <span class="inline-flex items-center gap-1 rounded-full bg-gold/15 px-2.5 py-0.5 text-xs font-semibold text-gold">
+          Penting
+        </span>
+      )
+    }
+    <time class="text-xs text-muted-foreground">{formatDateID(announcement.date)}</time>
+  </div>
+  <h3 class="mt-2 font-display text-lg font-semibold text-balance">{announcement.title}</h3>
+  {summary && <p class="mt-2 text-sm leading-relaxed text-muted-foreground">{summary}</p>}
+</article>

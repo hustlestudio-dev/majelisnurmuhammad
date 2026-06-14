@@ -1,0 +1,71 @@
+---
+import '@fontsource-variable/plus-jakarta-sans'
+import '@fontsource/poppins/500.css'
+import '@fontsource/poppins/600.css'
+import '@fontsource/poppins/700.css'
+import '@fontsource/amiri/400.css'
+import '@fontsource/amiri/700.css'
+import '@/styles/starwind.css'
+
+import Header from '@/components/Header.astro'
+import Footer from '@/components/Footer.astro'
+import { getSiteSettings, mediaUrl } from '@/lib/payload'
+import type { SiteSettings } from '@/lib/types'
+
+interface Props {
+  title?: string
+  description?: string
+  ogImage?: string
+  settings?: SiteSettings
+}
+
+const { title, description, ogImage, settings: settingsProp } = Astro.props
+const settings = settingsProp ?? (await getSiteSettings())
+const siteName = settings.siteName ?? 'Majelis Nur Muhammad'
+const tagline = settings.tagline ?? 'Pondok Pesantren Nur Muhammad Al-Hasany Banjaran'
+const pageTitle = title ? `${title} · ${siteName}` : `${siteName} — ${tagline}`
+const desc =
+  description ??
+  'Website resmi Majelis Nur Muhammad — informasi jadwal pengajian, kajian, artikel keislaman, dan kegiatan majelis.'
+const ogImg = ogImage ?? mediaUrl(settings.logo) ?? '/logo.jpeg'
+const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin).toString()
+---
+<!doctype html>
+<html lang="id" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="icon" type="image/jpeg" href="/logo.jpeg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={desc} />
+    <link rel="canonical" href={canonical} />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={siteName} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={desc} />
+    <meta property="og:image" content={ogImg} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={desc} />
+    <meta name="theme-color" content="#166534" />
+    <script is:inline>
+      (() => {
+        try {
+          const t = localStorage.getItem('theme')
+          if (t === 'dark' || (!t && matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark')
+          }
+        } catch {}
+      })()
+    </script>
+  </head>
+  <body class="flex min-h-dvh flex-col">
+    <Header settings={settings} />
+    <main class="flex-1">
+      <slot />
+    </main>
+    <Footer settings={settings} />
+  </body>
+</html>

@@ -1,0 +1,28 @@
+---
+import { DAY_LABELS } from '@/lib/constants'
+import type { Schedule } from '@/lib/types'
+
+interface Props {
+  schedule: Schedule
+}
+const { schedule } = Astro.props
+const day = DAY_LABELS[schedule.day] ?? schedule.day
+const time = [schedule.timeStart, schedule.timeEnd].filter(Boolean).join(' – ')
+---
+<article
+  class="flex gap-4 rounded-2xl border border-border bg-card p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-lg"
+>
+  <div class="flex size-16 shrink-0 flex-col items-center justify-center rounded-xl bg-primary text-primary-foreground">
+    <span class="text-xs font-medium opacity-80">Hari</span>
+    <span class="font-display text-sm font-bold">{day}</span>
+  </div>
+  <div class="min-w-0 flex-1">
+    <h3 class="font-display font-semibold text-balance">{schedule.title}</h3>
+    {time && <p class="mt-1 text-sm font-medium text-primary">{time}</p>}
+    <div class="mt-2 space-y-1 text-sm text-muted-foreground">
+      {schedule.ustadz && <p>Pemateri: {schedule.ustadz}</p>}
+      {schedule.kitab && <p>Kitab: {schedule.kitab}</p>}
+      {schedule.location && <p>Lokasi: {schedule.location}</p>}
+    </div>
+  </div>
+</article>

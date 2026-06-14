@@ -1,0 +1,54 @@
+---
+import { cn } from '@/lib/utils'
+
+interface Props {
+  href?: string
+  variant?: 'primary' | 'outline' | 'ghost' | 'gold'
+  size?: 'sm' | 'md' | 'lg'
+  class?: string
+  target?: string
+  rel?: string
+  type?: 'button' | 'submit'
+}
+
+const {
+  href,
+  variant = 'primary',
+  size = 'md',
+  class: className,
+  target,
+  rel,
+  type = 'button',
+} = Astro.props
+
+const base =
+  'inline-flex items-center justify-center gap-2 rounded-full font-medium transition-all duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-50'
+
+const variants = {
+  primary:
+    'bg-primary text-primary-foreground shadow-sm shadow-primary/20 hover:bg-primary-accent hover:shadow-md hover:-translate-y-0.5',
+  outline:
+    'border border-primary/30 text-primary hover:bg-primary hover:text-primary-foreground',
+  ghost: 'text-primary hover:bg-accent',
+  gold: 'bg-gold text-gold-foreground shadow-sm hover:brightness-110 hover:-translate-y-0.5',
+}
+
+const sizes = {
+  sm: 'text-sm px-4 py-2',
+  md: 'text-sm px-5 py-2.5',
+  lg: 'text-base px-7 py-3.5',
+}
+
+const classes = cn(base, variants[variant], sizes[size], className)
+---
+{
+  href ? (
+    <a href={href} target={target} rel={rel} class={classes}>
+      <slot />
+    </a>
+  ) : (
+    <button type={type} class={classes}>
+      <slot />
+    </button>
+  )
+}

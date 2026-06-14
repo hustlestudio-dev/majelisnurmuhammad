@@ -1,0 +1,148 @@
+---
+export const prerender = false
+
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import Button from '@/components/Button.astro'
+import CategoryBadge from '@/components/CategoryBadge.astro'
+import Divider from '@/components/Divider.astro'
+import StarOrnament from '@/components/StarOrnament.astro'
+import { getArticleBySlug, mediaUrl } from '@/lib/payload'
+import { renderRichText, richTextToPlain } from '@/lib/richtext'
+import { formatDateID } from '@/lib/constants'
+
+const { slug } = Astro.params
+const article = slug ? await getArticleBySlug(slug) : null
+
+if (!article) {
+  return new Response(null, { status: 404, statusText: 'Artikel tidak ditemukan' })
+}
+
+const cover = mediaUrl(article.coverImage)
+const body = renderRichText(article.content)
+const tags = (article.tags ?? []).map((t) => t.tag).filter(Boolean) as string[]
+const description = article.excerpt ?? richTextToPlain(article.content, 160)
+---
+<BaseLayout
+  title={article.title}
+  description={description}
+  ogImage={cover ?? undefined}
+>
+  <article>
+    <header class="islamic-grid relative overflow-hidden border-b border-border/60">
+      <StarOrnament class="absolute -top-8 -right-8 size-40 opacity-[0.07]" />
+      <StarOrnament class="absolute -bottom-10 -left-10 size-44 opacity-[0.07]" />
+      <div class="relative mx-auto max-w-3xl px-4 py-16 text-center sm:px-6 sm:py-20">
+        <CategoryBadge category={article.category} />
+        <h1 class="mt-4 font-display text-3xl font-extrabold text-balance sm:text-4xl md:text-5xl">
+          <span class="text-gradient-emerald">{article.title}</span>
+        </h1>
+        <div class="mt-5 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
+          {article.author && <span>{article.author}</span>}
+          {article.author && article.publishedDate && <span class="text-gold">•</span>}
+          {article.publishedDate && <span>{formatDateID(article.publishedDate)}</span>}
+        </div>
+        <Divider class="mt-7" />
+      </div>
+    </header>
+
+    {
+      cover && (
+        <div class="mx-auto -mb-10 max-w-4xl px-4 sm:px-6">
+          <img
+            src={cover}
+            alt={article.title}
+            class="aspect-[16/9] w-full rounded-3xl border border-border object-cover shadow-xl"
+            loading="eager"
+          />
+        </div>
+      )
+    }
+
+    <div class="mx-auto max-w-3xl px-4 py-16 sm:px-6" class:list={[cover && 'pt-20']}>
+      {
+        article.excerpt && (
+          <p class="mb-8 text-lg leading-relaxed text-pretty text-muted-foreground">
+            {article.excerpt}
+          </p>
+        )
+      }
+
+      <div class="article-prose" set:html={body}></div>
+
+      {
+        tags.length > 0 && (
+          <div class="mt-10 flex flex-wrap gap-2 border-t border-border pt-8">
+            {tags.map((tag) => (
+              <span class="rounded-full bg-accent px-3 py-1 text-xs font-medium text-primary">
+                #{tag}
+              </span>
+            ))}
+          </div>
+        )
+      }
+
+      <div class="mt-12 flex justify-center">
+        <Button href="/artikel" variant="outline">← Kembali ke Artikel</Button>
+      </div>
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .article-prose {
+    line-height: 1.85;
+    color: var(--foreground);
+  }
+  .article-prose :global(p) {
+    margin-block: 1.1em;
+  }
+  .article-prose :global(h2) {
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-block: 1.6em 0.5em;
+    color: var(--primary);
+  }
+  .article-prose :global(h3) {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-block: 1.4em 0.4em;
+  }
+  .article-prose :global(ul),
+  .article-prose :global(ol) {
+    margin-block: 1.1em;
+    padding-inline-start: 1.4em;
+  }
+  .article-prose :global(ul) {
+    list-style: disc;
+  }
+  .article-prose :global(ol) {
+    list-style: decimal;
+  }
+  .article-prose :global(li) {
+    margin-block: 0.4em;
+  }
+  .article-prose :global(a) {
+    color: var(--primary);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .article-prose :global(blockquote) {
+    border-inline-start: 2px solid var(--border);
+    padding-inline-start: 1.2em;
+    margin-block: 1.4em;
+    font-style: italic;
+    color: var(--muted-foreground);
+  }
+  .article-prose :global(strong) {
+    font-weight: 700;
+    color: var(--foreground);
+  }
+  .article-prose :global(code) {
+    background: var(--muted);
+    padding: 0.15em 0.4em;
+    border-radius: 0.35em;
+    font-size: 0.9em;
+  }
+</style>
