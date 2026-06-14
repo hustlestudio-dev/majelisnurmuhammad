@@ -1,0 +1,16 @@
+{
+  "name": "nurmuhammad-official",
+  "private": true,
+  "packageManager": "pnpm@10.20.0",
+  "scripts": {
+    "dev:payload": "cd apps/payload && pnpm dev",
+    "dev:frontend": "cd apps/frontend && pnpm dev",
+    "dev": "concurrently \"pnpm dev:payload\" \"pnpm dev:frontend\"",
+    "build": "turbo run build"
+  },
+  "devDependencies": {
+    "concurrently": "latest",
+    "cross-env": "^7.0.3",
+    "turbo": "latest"
+  }
+}
