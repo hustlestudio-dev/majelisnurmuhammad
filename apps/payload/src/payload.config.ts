@@ -17,6 +17,37 @@ const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 const isProduction = process.env.NODE_ENV === 'production'
 
+const requiredEnv = {
+  PAYLOAD_SECRET: process.env.PAYLOAD_SECRET,
+  DATABASE_URI: process.env.DATABASE_URI,
+  DATABASE_AUTH_TOKEN: process.env.DATABASE_AUTH_TOKEN,
+  S3_BUCKET: process.env.S3_BUCKET,
+  S3_ENDPOINT: process.env.S3_ENDPOINT,
+  S3_REGION: process.env.S3_REGION,
+  S3_ACCESS_KEY_ID: process.env.S3_ACCESS_KEY_ID,
+  S3_SECRET_ACCESS_KEY: process.env.S3_SECRET_ACCESS_KEY,
+  NEXT_PUBLIC_SERVER_URL: process.env.NEXT_PUBLIC_SERVER_URL,
+  FRONTEND_URL: process.env.FRONTEND_URL,
+} as const
+
+const missing = Object.entries(requiredEnv)
+  .filter(([, v]) => v === undefined || v === '')
+  .map(([k]) => k)
+
+const present = Object.entries(requiredEnv)
+  .filter(([, v]) => v !== undefined && v !== '')
+  .map(([k, v]) => `${k}=${k.includes('SECRET') || k.includes('TOKEN') || k.includes('KEY') ? '<redacted>' : v}`)
+
+console.log('[payload.config] env check: present =', present)
+if (missing.length > 0) {
+  console.error('[payload.config] MISSING env vars:', missing)
+  throw new Error(
+    `Missing required env vars: ${missing.join(', ')}. ` +
+      `Set them in Netlify UI -> Site settings -> Environment variables ` +
+      `(scope must include "Functions" / runtime, not just "Builds").`
+  )
+}
+
 const serverURL = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'
 const frontendURL = process.env.FRONTEND_URL || 'http://localhost:4321'
 
