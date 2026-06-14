@@ -1,9 +1,10 @@
 # Netlify site for the Payload CMS backend (apps/payload).
-# In Netlify UI set Base directory = apps/payload so this file is picked up.
+# Base directory is the repo root (default). pnpm workspace filter targets
+# this app, and `publish` is resolved from the repo root to apps/payload/.next.
 # Build runs `payload migrate` (Turso) then `next build`.
 [build]
   command = "pnpm --filter apps-payload run build:netlify"
-  publish = ".next"
+  publish = "apps/payload/.next"
 
 [build.environment]
   NODE_VERSION = "22"
