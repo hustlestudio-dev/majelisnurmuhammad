@@ -28,9 +28,11 @@ const socials = [
         <Logo src={logoSrc} class="size-12" />
         <span class="font-display text-lg font-bold">{siteName}</span>
       </div>
-      <p class="mt-4 max-w-md text-sm leading-relaxed text-primary-foreground/90">
-        {settings.footerText}
-      </p>
+      {settings.footerText?.trim() && (
+        <p class="mt-4 max-w-md text-sm leading-relaxed text-primary-foreground/90">
+          {settings.footerText}
+        </p>
+      )}
       {
         socials.length > 0 && (
           <div class="mt-5 flex flex-wrap gap-2">

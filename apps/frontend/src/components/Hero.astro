@@ -66,14 +66,23 @@ const view = slides.map((s) => {
         >
           {/* Background */}
           {slide.bg ? (
-            <img
-              src={slide.bg}
-              alt={slide.image?.alt ?? ''}
-              class="absolute inset-0 -z-10 size-full object-cover"
-              loading={i === 0 ? 'eager' : 'lazy'}
-              fetchpriority={i === 0 ? 'high' : undefined}
-              decoding="async"
-            />
+            <>
+              {/* Blurred fill: covers letterbox space so contained image never shows empty bars. */}
+              <div
+                class="absolute inset-0 -z-20 scale-110 bg-cover bg-center bg-no-repeat blur-2xl"
+                style={`background-image:url('${slide.bg}')`}
+                aria-hidden="true"
+              />
+              {/* Image itself: object-contain so the full poster is always visible, never cropped. */}
+              <img
+                src={slide.bg}
+                alt={slide.image?.alt ?? ''}
+                class="absolute inset-0 -z-10 size-full object-contain"
+                loading={i === 0 ? 'eager' : 'lazy'}
+                fetchpriority={i === 0 ? 'high' : undefined}
+                decoding="async"
+              />
+            </>
           ) : (
             <div class="absolute inset-0 -z-10 islamic-grid">
               <div
