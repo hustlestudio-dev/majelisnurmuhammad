@@ -10,7 +10,7 @@
 		{ "binding": "MEDIA", "bucket_name": "emdash-media" }
 	],
 	"kv_namespaces": [
-		{ "binding": "SESSION", "id": "<run: wrangler kv namespace create SESSION>" }
+		{ "binding": "SESSION" }
 	],
 	"observability": {
 		"logs": {

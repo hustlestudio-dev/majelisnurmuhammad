@@ -4,8 +4,8 @@ interface Props {
   class?: string
   src?: string | null
 }
-const { class: className = '', src = '/logo.jpeg' } = Astro.props
-const resolved = src || '/logo.jpeg'
+const { class: className = '', src = '/logo.png' } = Astro.props
+const resolved = src || '/logo.png'
 ---
 <span class={`relative inline-flex shrink-0 ${className}`}>
   <img

@@ -1,15 +1,15 @@
 ---
 import Logo from './Logo.astro'
-import StarOrnament from './StarOrnament.astro'
 import { NAV_LINKS } from '@/lib/constants'
-import { mediaUrl } from '@/lib/content'
 import type { SiteSettings } from '@/lib/types'
 
 interface Props {
   settings: SiteSettings
 }
 const { settings } = Astro.props
-const logoSrc = mediaUrl(settings.logo) ?? '/logo.jpeg'
+// Local transparent mark — the admin-uploaded logo has a baked-in white box
+// that looks wrong on the green footer.
+const logoSrc = '/logo.png'
 const siteName = settings.siteName ?? 'Majelis Nur Muhammad'
 const s = settings.social ?? {}
 const year = 2026
@@ -22,15 +22,10 @@ const socials = [
 ].filter((x) => x.href)
 ---
 <footer class="relative mt-24 bg-primary text-primary-foreground">
-  <div class="pointer-events-none absolute top-0 right-0 opacity-10">
-    <StarOrnament variant="solid" class="size-64" />
-  </div>
   <div class="relative mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-4">
     <div class="md:col-span-2">
       <div class="flex items-center gap-3">
-        <span class="rounded-xl bg-white/10 p-1.5">
-          <Logo src={logoSrc} class="size-10" />
-        </span>
+        <Logo src={logoSrc} class="size-12" />
         <span class="font-display text-lg font-bold">{siteName}</span>
       </div>
       <p class="mt-4 max-w-md text-sm leading-relaxed text-primary-foreground/90">
@@ -70,11 +65,35 @@ const socials = [
     </div>
 
     <div>
-      <h3 class="font-display text-sm font-semibold tracking-wide text-primary-foreground uppercase">Kontak</h3>
-      <ul class="mt-4 space-y-2 text-sm text-primary-foreground/90">
-        {settings.address && <li>{settings.address}</li>}
-        {settings.whatsapp && <li>WA: {settings.whatsapp}</li>}
-        {settings.email && <li>{settings.email}</li>}
+      <h3 class="font-display text-sm font-semibold tracking-wide text-primary-foreground uppercase">Kontak &amp; Donasi</h3>
+      <ul class="mt-4 space-y-3 text-sm text-primary-foreground/90">
+        <li class="flex gap-2">
+          <span aria-hidden="true">▪︎</span>
+          <span>Wakaf Pembangunan Ponpes Nur Muhammad Banjaran</span>
+        </li>
+        <li class="flex gap-2">
+          <span aria-hidden="true">💳</span>
+          <span>
+            No. Rek <strong class="font-semibold text-primary-foreground">BCA</strong> (Bank Central Asia)
+            <br />
+            <span class="font-mono tracking-wide">1392440024</span>
+            <br />
+            <span class="text-primary-foreground/75">a.n. Kiagus Akbar Saman</span>
+          </span>
+        </li>
+        <li class="flex gap-2">
+          <span aria-hidden="true">📞</span>
+          <a
+            href="https://wa.me/6282218776673"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="underline-offset-2 transition-colors hover:underline"
+          >
+            Informasi &amp; Konfirmasi: 0822-1877-6673
+          </a>
+        </li>
+        {settings.address && <li class="flex gap-2"><span aria-hidden="true">📍</span><span>{settings.address}</span></li>}
+        {settings.email && <li class="flex gap-2"><span aria-hidden="true">✉️</span><span>{settings.email}</span></li>}
       </ul>
     </div>
   </div>

@@ -2,7 +2,6 @@
 import Logo from './Logo.astro'
 import ThemeToggle from './ThemeToggle.astro'
 import { NAV_LINKS } from '@/lib/constants'
-import { mediaUrl } from '@/lib/content'
 import type { SiteSettings } from '@/lib/types'
 
 interface Props {
@@ -12,7 +11,8 @@ const { settings } = Astro.props
 const pathname = Astro.url.pathname
 const isActive = (href: string) =>
   href === '/' ? pathname === '/' : pathname.startsWith(href)
-const logoSrc = mediaUrl(settings.logo) ?? '/logo.jpeg'
+// Local transparent mark for a clean logo on any navbar background (incl. dark).
+const logoSrc = '/logo.png'
 const siteName = settings.siteName ?? 'Majelis Nur Muhammad'
 ---
 <header
