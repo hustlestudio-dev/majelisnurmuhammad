@@ -35,12 +35,16 @@ const bgUrl = (img: HeroSlide['image']): string | null => {
   return null
 }
 
-const view = slides.map((s) => ({
-  ...s,
-  bg: bgUrl(s.image),
-  ctaLabel: s.ctaLabel || 'Jadwal Pengajian',
-  ctaHref: s.ctaHref || '/jadwal',
-}))
+const view = slides.map((s) => {
+  const bg = bgUrl(s.image)
+  return {
+    ...s,
+    bg,
+    onImage: !!bg,
+    ctaLabel: s.ctaLabel || 'Jadwal Pengajian',
+    ctaHref: s.ctaHref || '/jadwal',
+  }
+})
 ---
 <section
   class="relative isolate overflow-hidden"
@@ -71,26 +75,28 @@ const view = slides.map((s) => ({
               decoding="async"
             />
           ) : (
-            <div class="absolute inset-0 -z-10 bg-[#0c0f0d]">
+            <div class="absolute inset-0 -z-10 islamic-grid">
               <div
                 class="absolute inset-0"
-                style="background: radial-gradient(120% 90% at 50% 0%, #19362a 0%, #11231b 45%, #0a0f0c 100%)"
+                style="background: radial-gradient(120% 90% at 50% 0%, var(--secondary) 0%, var(--background) 60%, var(--background) 100%)"
               />
             </div>
           )}
 
-          {/* Readability overlay (neutral, not green) */}
-          <div
-            class="absolute inset-0"
-            aria-hidden="true"
-            style="background: linear-gradient(to bottom, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.35) 40%, rgba(0,0,0,0.78) 100%)"
-          />
+          {/* Readability overlay — only over photos (keeps text legible). */}
+          {slide.onImage && (
+            <div
+              class="absolute inset-0"
+              aria-hidden="true"
+              style="background: linear-gradient(to bottom, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.35) 40%, rgba(0,0,0,0.78) 100%)"
+            />
+          )}
 
           {/* Content */}
           <div class="relative mx-auto flex max-w-3xl flex-col items-center px-4 py-24 text-center sm:px-6">
             {!slide.bg && (
               <div class="hero-rise mb-8" style="--d:0ms">
-                <span class="inline-flex items-center justify-center rounded-full border border-white/15 bg-white/5 p-3 shadow-2xl shadow-black/40 backdrop-blur-sm">
+                <span class="inline-flex items-center justify-center rounded-full border border-border bg-card p-3 shadow-xl shadow-primary/10 backdrop-blur-sm">
                   <Logo src={logoSrc} class="size-24 drop-shadow-lg sm:size-28" />
                 </span>
               </div>
@@ -100,14 +106,25 @@ const view = slides.map((s) => ({
               <p
                 dir="rtl"
                 lang="ar"
-                class="hero-rise font-arabic mt-7 text-4xl leading-loose text-gold [text-shadow:0_2px_20px_rgba(0,0,0,0.6)] sm:text-5xl"
+                class:list={[
+                  'hero-rise font-arabic mt-7 text-4xl leading-loose text-gold sm:text-5xl',
+                  slide.onImage && '[text-shadow:0_2px_20px_rgba(0,0,0,0.6)]',
+                ]}
                 style="--d:160ms"
               >
                 {slide.arabic}
               </p>
             )}
 
-            <h1 class="hero-rise mt-4 font-display text-4xl font-extrabold tracking-tight text-balance text-white [text-shadow:0_2px_16px_rgba(0,0,0,0.55)] sm:text-6xl" style="--d:240ms">
+            <h1
+              class:list={[
+                'hero-rise mt-4 font-display text-4xl font-extrabold tracking-tight text-balance sm:text-6xl',
+                slide.onImage
+                  ? 'text-white [text-shadow:0_2px_16px_rgba(0,0,0,0.55)]'
+                  : 'text-foreground',
+              ]}
+              style="--d:240ms"
+            >
               {slide.heading}
             </h1>
 
@@ -118,7 +135,15 @@ const view = slides.map((s) => ({
             </div>
 
             {slide.subheading && (
-              <p class="hero-rise mt-6 max-w-2xl text-base text-pretty text-white/85 [text-shadow:0_1px_10px_rgba(0,0,0,0.7)] sm:text-lg" style="--d:360ms">
+              <p
+                class:list={[
+                  'hero-rise mt-6 max-w-2xl text-base text-pretty sm:text-lg',
+                  slide.onImage
+                    ? 'text-white/85 [text-shadow:0_1px_10px_rgba(0,0,0,0.7)]'
+                    : 'text-muted-foreground',
+                ]}
+                style="--d:360ms"
+              >
                 {slide.subheading}
               </p>
             )}

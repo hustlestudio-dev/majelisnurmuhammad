@@ -51,10 +51,11 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin).to
     <meta name="twitter:description" content={desc} />
     <meta name="theme-color" content="#166534" />
     <script is:inline>
+      // Default to light regardless of OS preference. Dark only when the user
+      // explicitly toggled it (stored as theme=dark).
       (() => {
         try {
-          const t = localStorage.getItem('theme')
-          if (t === 'dark' || (!t && matchMedia('(prefers-color-scheme: dark)').matches)) {
+          if (localStorage.getItem('theme') === 'dark') {
             document.documentElement.classList.add('dark')
           }
         } catch {}
