@@ -11,8 +11,16 @@ export interface HeroVerse {
   reference?: string | null
 }
 
+export interface HeroImage {
+  storageKey?: string | null
+  id?: string | null
+  alt?: string | null
+  width?: number | null
+  height?: number | null
+}
+
 export interface HeroSlide {
-  image?: Media | null
+  image?: HeroImage | null
   heading: string
   subheading?: string | null
   arabic?: string | null

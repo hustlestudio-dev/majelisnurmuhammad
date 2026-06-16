@@ -1,9 +1,14 @@
-import { getEmDashCollection, getEmDashEntry } from 'emdash'
+import {
+  getEmDashCollection,
+  getEmDashEntry,
+  getSiteSettings as getNativeSettings,
+} from 'emdash'
 
 import type {
   Announcement,
   Article,
   ArticleCategory,
+  HeroSlide,
   Media,
   Schedule,
   SiteSettings,
@@ -87,20 +92,36 @@ const mapTeam = (entry: any): TeamMember => {
   }
 }
 
-const mapSettings = (entry: any): SiteSettings => {
+const heroImage = (img: any): HeroSlide['image'] => {
+  if (!img) return null
+  const storageKey = (img.meta?.storageKey as string | undefined) ?? null
+  const id = (img.id as string | undefined) ?? null
+  if (!storageKey && !id) return null
+  return {
+    storageKey,
+    id,
+    alt: img.alt ?? null,
+    width: img.width ?? null,
+    height: img.height ?? null,
+  }
+}
+
+const mapHeroSlide = (entry: any): HeroSlide => {
   const d = entry?.data ?? {}
   return {
-    siteName: d.site_name,
-    tagline: d.tagline,
-    logo: toMedia(d.logo),
-    heroSlides: (d.hero_slides ?? []).map((s: any) => ({
-      image: toMedia(s.image),
-      heading: s.heading,
-      subheading: s.subheading ?? null,
-      arabic: s.arabic ?? null,
-      ctaLabel: s.cta_label ?? null,
-      ctaHref: s.cta_href ?? null,
-    })),
+    image: heroImage(d.image),
+    heading: d.heading,
+    subheading: d.subheading ?? null,
+    arabic: d.arabic ?? null,
+    ctaLabel: d.cta_label ?? null,
+    ctaHref: d.cta_href ?? null,
+  }
+}
+
+// Maps the single `info_situs` entry to the custom (non-native) settings fields.
+const infoFromEntry = (entry: any) => {
+  const d = entry?.data ?? {}
+  return {
     heroVerse: {
       arabic: d.hero_verse_arabic ?? null,
       translation: d.hero_verse_translation ?? null,
@@ -109,12 +130,7 @@ const mapSettings = (entry: any): SiteSettings => {
     address: d.address ?? null,
     whatsapp: d.whatsapp ?? null,
     email: d.email ?? null,
-    social: {
-      youtube: d.social_youtube ?? null,
-      tiktok: d.social_tiktok ?? null,
-      instagram: d.social_instagram ?? null,
-      facebook: d.social_facebook ?? null,
-    },
+    tiktok: d.tiktok ?? null,
     donation: {
       bankName: d.donation_bank_name ?? null,
       accountNumber: d.donation_account_number ?? null,
@@ -143,21 +159,77 @@ const collection = async <T>(
   }
 }
 
+// Hero slides live in their own `hero` collection (auto-slider when >1).
+const getHeroSlides = async (): Promise<HeroSlide[]> => {
+  try {
+    const { entries } = await getEmDashCollection('hero')
+    return (entries ?? [])
+      .slice()
+      .sort((a: any, b: any) => (a?.data?.order ?? 0) - (b?.data?.order ?? 0))
+      .map(mapHeroSlide)
+  } catch (err) {
+    console.error('[emdash] hero collection failed:', err)
+    return []
+  }
+}
+
+// Site settings = native EmDash Site Settings (identity/logo/social) merged with
+// the single `info_situs` entry (contact/donation/footer/hero verse) and the
+// `hero` collection (slides). Keeps the SiteSettings shape stable for components.
 export const getSiteSettings = async (): Promise<SiteSettings> => {
+  let native: any = {}
   try {
-    const { entry } = await getEmDashEntry('settings', 'main')
-    if (entry) return mapSettings(entry)
+    native = (await getNativeSettings()) ?? {}
   } catch (err) {
-    console.error('[emdash] settings entry failed:', err)
+    console.error('[emdash] native site settings failed:', err)
   }
-  // Fallback: first entry in the settings collection.
+
+  let info: ReturnType<typeof infoFromEntry> | Record<string, never> = {}
   try {
-    const { entries } = await getEmDashCollection('settings')
-    if (entries?.[0]) return mapSettings(entries[0])
+    const { entries } = await getEmDashCollection('info_situs')
+    if (entries?.[0]) info = infoFromEntry(entries[0])
   } catch (err) {
-    console.error('[emdash] settings collection failed:', err)
+    console.error('[emdash] info_situs collection failed:', err)
   }
-  return mapSettings({ data: {} })
+
+  const heroSlides = await getHeroSlides()
+
+  const logo: Media | null = native.logo?.url
+    ? {
+        url: native.logo.url,
+        alt: native.logo.alt ?? null,
+        width: native.logo.width ?? null,
+        height: native.logo.height ?? null,
+      }
+    : null
+
+  return {
+    siteName: native.title ?? undefined,
+    tagline: native.tagline ?? undefined,
+    logo,
+    heroSlides,
+    heroVerse: (info as any).heroVerse ?? {
+      arabic: null,
+      translation: null,
+      reference: null,
+    },
+    address: (info as any).address ?? null,
+    whatsapp: (info as any).whatsapp ?? null,
+    email: (info as any).email ?? null,
+    social: {
+      youtube: native.social?.youtube ?? null,
+      tiktok: (info as any).tiktok ?? null,
+      instagram: native.social?.instagram ?? null,
+      facebook: native.social?.facebook ?? null,
+    },
+    donation: (info as any).donation ?? {
+      bankName: null,
+      accountNumber: null,
+      accountHolder: null,
+      note: null,
+    },
+    footerText: (info as any).footerText ?? null,
+  }
 }
 
 export const getSchedules = async (): Promise<Schedule[]> => {
