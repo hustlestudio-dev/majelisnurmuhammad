@@ -1,0 +1,26 @@
+diff --git a/dist/astro/routes/api/auth/oauth/_provider_/callback.mjs b/dist/astro/routes/api/auth/oauth/_provider_/callback.mjs
+index c18f0500091c074b0eb5675e226c5abc2a9656ef..3c1f860138370d79d668c16b45b48433660bfe8f 100644
+--- a/dist/astro/routes/api/auth/oauth/_provider_/callback.mjs
++++ b/dist/astro/routes/api/auth/oauth/_provider_/callback.mjs
+@@ -53,7 +53,7 @@ const GET = async ({ params, request, locals, session, redirect }) => {
+ 	}
+ 	if (!code || !state) return redirect(`/_emdash/admin/login?error=invalid_callback&message=${encodeURIComponent("Missing code or state parameter")}`);
+ 	try {
+-		const providers = getOAuthConfig(locals.runtime?.env ?? import.meta.env);
++		const providers = getOAuthConfig(await (async () => { try { const e = locals?.runtime?.env; if (e) return e; } catch {} try { const m = await import("cloudflare:workers"); if (m?.env) return m.env; } catch {} return import.meta.env; })());
+ 		if (!providers[provider]) return redirect(`/_emdash/admin/login?error=provider_not_configured&message=${encodeURIComponent(`OAuth provider ${provider} is not configured`)}`);
+ 		const adapter = createKyselyAdapter(emdash.db);
+ 		const stateStore = createOAuthStateStore(emdash.db);
+diff --git a/dist/astro/routes/api/auth/oauth/_provider_.mjs b/dist/astro/routes/api/auth/oauth/_provider_.mjs
+index d89831c9ae42aeba09d01a0111cd4987129fb54d..056affe85b16e0871c3928a99b7210cf5b703bdd 100644
+--- a/dist/astro/routes/api/auth/oauth/_provider_.mjs
++++ b/dist/astro/routes/api/auth/oauth/_provider_.mjs
+@@ -42,7 +42,7 @@ const GET = async ({ params, request, locals, redirect }) => {
+ 	if (!emdash?.db) return redirect(`${errorRedirectBase}?error=server_error&message=${encodeURIComponent("Database not configured")}`);
+ 	try {
+ 		const url = new URL(request.url);
+-		const providers = getOAuthConfig(locals.runtime?.env ?? import.meta.env);
++		const providers = getOAuthConfig(await (async () => { try { const e = locals?.runtime?.env; if (e) return e; } catch {} try { const m = await import("cloudflare:workers"); if (m?.env) return m.env; } catch {} return import.meta.env; })());
+ 		if (!providers[provider]) return redirect(`${errorRedirectBase}?error=provider_not_configured&message=${encodeURIComponent(`OAuth provider ${provider} is not configured. Set either EMDASH_OAUTH_${provider.toUpperCase()}_CLIENT_ID and EMDASH_OAUTH_${provider.toUpperCase()}_CLIENT_SECRET, or ${provider.toUpperCase()}_CLIENT_ID and ${provider.toUpperCase()}_CLIENT_SECRET.`)}`);
+ 		const { url: authUrl } = await createAuthorizationUrl({
+ 			baseUrl: `${getPublicOrigin(url, emdash?.config)}/_emdash`,

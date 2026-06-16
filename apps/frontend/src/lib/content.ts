@@ -290,6 +290,30 @@ export const getAnnouncements = async (
   )
 }
 
+export const getAnnouncementById = async (
+  id: string,
+): Promise<Announcement | null> => {
+  try {
+    const { entry } = await getEmDashEntry('announcements', id, {
+      status: 'published',
+    } as any)
+    if (entry && isPublished(entry.data)) return mapAnnouncement(entry)
+  } catch (err) {
+    console.error(`[emdash] announcement ${id} failed:`, err)
+  }
+  return null
+}
+
+export const getScheduleById = async (id: string): Promise<Schedule | null> => {
+  try {
+    const { entry } = await getEmDashEntry('schedules', id)
+    if (entry) return mapSchedule(entry)
+  } catch (err) {
+    console.error(`[emdash] schedule ${id} failed:`, err)
+  }
+  return null
+}
+
 export const getTeam = async (): Promise<TeamMember[]> => {
   const items = await collection('team', mapTeam)
   return items.sort((a, b) => (a.order ?? 0) - (b.order ?? 0))

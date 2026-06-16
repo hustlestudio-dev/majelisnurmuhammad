@@ -4,6 +4,11 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  emdash@0.19.0:
+    hash: eb905b47769f266f2fd0ef9c9e00acf2a2d4bd26a66f5fe78743c5885b566f3a
+    path: patches/emdash@0.19.0.patch
+
 importers:
 
   .:
@@ -59,9 +64,12 @@ importers:
       astro:
         specifier: ^6.4.6
         version: 6.4.6(@netlify/blobs@10.7.9)(@types/node@22.19.9)(aws4fetch@1.0.20)(jiti@2.7.0)(lightningcss@1.32.0)(rollup@2.80.0)(sass@1.77.4)(terser@5.16.9)(tsx@4.22.4)(yaml@2.9.0)
+      astro-seo:
+        specifier: ^1.1.0
+        version: 1.1.0(prettier@3.8.4)(typescript@5.7.3)
       emdash:
         specifier: ^0.19.0
-        version: 0.19.0(5b89d739ea8e66849cfd18a570670697)
+        version: 0.19.0(patch_hash=eb905b47769f266f2fd0ef9c9e00acf2a2d4bd26a66f5fe78743c5885b566f3a)(5b89d739ea8e66849cfd18a570670697)
       react:
         specifier: 19.2.1
         version: 19.2.1
@@ -4719,6 +4727,9 @@ packages:
     resolution: {integrity: sha512-2dOPJAZs6IiVotFaQB5Em0fYUNhX7cf2FfWf0dXfQ67wLmLXsUiQnRzb1BORrc9LS8YVQhXjhNXARB4kZwO+2w==}
     peerDependencies:
       astro: '>=4.6.0'
+
+  astro-seo@1.1.0:
+    resolution: {integrity: sha512-G6LDNDyga30o+52v58jU7C35n3cORUzk7RSuY+xf/ZRbW6JiNplyaOO1VoYVKO+xzYNaBcxqNln2RFRR/wgJNQ==}
 
   astro@6.4.6:
     resolution: {integrity: sha512-48OBTBKR9ctbf+DQxpOuxGl8ebfn59zTuNQMBzptmG/Mi/H8IdfMSbJgGuX1I/4U6g9yazG1p4BHlf4+2hWU4Q==}
@@ -11772,7 +11783,7 @@ snapshots:
       '@astrojs/cloudflare': 13.7.0(@types/node@22.19.9)(astro@6.4.6(@netlify/blobs@10.7.9)(@types/node@22.19.9)(aws4fetch@1.0.20)(jiti@2.7.0)(lightningcss@1.32.0)(rollup@2.80.0)(sass@1.77.4)(terser@5.16.9)(tsx@4.22.4)(yaml@2.9.0))(jiti@2.7.0)(lightningcss@1.32.0)(sass@1.77.4)(terser@5.16.9)(tsx@4.22.4)(workerd@1.20260611.1)(wrangler@4.100.0(@cloudflare/workers-types@4.20260613.1))(yaml@2.9.0)
       '@cloudflare/workers-types': 4.20260613.1
       astro: 6.4.6(@netlify/blobs@10.7.9)(@types/node@22.19.9)(aws4fetch@1.0.20)(jiti@2.7.0)(lightningcss@1.32.0)(rollup@2.80.0)(sass@1.77.4)(terser@5.16.9)(tsx@4.22.4)(yaml@2.9.0)
-      emdash: 0.19.0(5b89d739ea8e66849cfd18a570670697)
+      emdash: 0.19.0(patch_hash=eb905b47769f266f2fd0ef9c9e00acf2a2d4bd26a66f5fe78743c5885b566f3a)(5b89d739ea8e66849cfd18a570670697)
       jose: 6.2.3
       kysely: 0.29.2
       kysely-d1: 0.4.0(kysely@0.29.2)
@@ -15453,6 +15464,14 @@ snapshots:
       '@portabletext/types': 2.0.15
       astro: 6.4.6(@netlify/blobs@10.7.9)(@types/node@22.19.9)(aws4fetch@1.0.20)(jiti@2.7.0)(lightningcss@1.32.0)(rollup@2.80.0)(sass@1.77.4)(terser@5.16.9)(tsx@4.22.4)(yaml@2.9.0)
 
+  astro-seo@1.1.0(prettier@3.8.4)(typescript@5.7.3):
+    dependencies:
+      '@astrojs/check': 0.9.9(prettier@3.8.4)(typescript@5.7.3)
+    transitivePeerDependencies:
+      - prettier
+      - prettier-plugin-astro
+      - typescript
+
   astro@6.4.6(@netlify/blobs@10.7.9)(@types/node@22.19.9)(aws4fetch@1.0.20)(jiti@2.7.0)(lightningcss@1.32.0)(rollup@2.80.0)(sass@1.77.4)(terser@5.16.9)(tsx@4.22.4)(yaml@2.9.0):
     dependencies:
       '@astrojs/compiler': 4.0.0
@@ -16424,7 +16443,7 @@ snapshots:
 
   electron-to-chromium@1.5.372: {}
 
-  emdash@0.19.0(5b89d739ea8e66849cfd18a570670697):
+  emdash@0.19.0(patch_hash=eb905b47769f266f2fd0ef9c9e00acf2a2d4bd26a66f5fe78743c5885b566f3a)(5b89d739ea8e66849cfd18a570670697):
     dependencies:
       '@astrojs/react': 5.0.7(@types/node@22.19.9)(@types/react-dom@19.2.3(@types/react@19.2.9))(@types/react@19.2.9)(jiti@2.7.0)(lightningcss@1.32.0)(react-dom@19.2.1(react@19.2.1))(react@19.2.1)(sass@1.77.4)(terser@5.16.9)(tsx@4.22.4)(yaml@2.9.0)
       '@atcute/client': 4.2.2(@atcute/lexicons@1.3.1)

@@ -9,6 +9,7 @@ import '@/styles/starwind.css'
 
 import Header from '@/components/Header.astro'
 import Footer from '@/components/Footer.astro'
+import { SEO } from 'astro-seo'
 import { getSiteSettings, mediaUrl } from '@/lib/content'
 import type { SiteSettings } from '@/lib/types'
 
@@ -26,9 +27,20 @@ const tagline = settings.tagline ?? 'Pondok Pesantren Nur Muhammad Al-Hasany Ban
 const pageTitle = title ? `${title} · ${siteName}` : `${siteName} — ${tagline}`
 const desc =
   description ??
-  'Website resmi Majelis Nur Muhammad — informasi jadwal pengajian, kajian, artikel keislaman, dan kegiatan majelis.'
+  'Majelis Nur Muhammad — pusat kajian Islam Ahlussunnah wal Jama\'ah. Informasi jadwal pengajian, artikel keislaman, dan kegiatan dakwah. Dukung dakwah kami melalui donasi untuk keberlangsungan majelis.'
 const ogImg = ogImage ?? mediaUrl(settings.logo) ?? '/logo.jpeg'
-const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin).toString()
+const ogImgAbsolute = new URL(ogImg, Astro.site ?? Astro.url).href
+const ogImageMeta = (settings.logo?.width && settings.logo?.height)
+  ? {
+      url: ogImgAbsolute,
+      width: settings.logo.width,
+      height: settings.logo.height,
+      alt: siteName,
+    }
+  : {
+      url: ogImgAbsolute,
+      alt: siteName,
+    }
 ---
 <!doctype html>
 <html lang="id" class="scroll-smooth">
@@ -38,17 +50,29 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin).to
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
     <link rel="icon" type="image/jpeg" href="/logo.jpeg" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <title>{pageTitle}</title>
-    <meta name="description" content={desc} />
-    <link rel="canonical" href={canonical} />
-    <meta property="og:type" content="website" />
-    <meta property="og:site_name" content={siteName} />
-    <meta property="og:title" content={pageTitle} />
-    <meta property="og:description" content={desc} />
-    <meta property="og:image" content={ogImg} />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content={pageTitle} />
-    <meta name="twitter:description" content={desc} />
+    <SEO
+      title={pageTitle}
+      description={desc}
+      openGraph={{
+        basic: {
+          title: pageTitle,
+          type: 'website',
+          image: ogImgAbsolute,
+        },
+        optional: {
+          description: desc,
+          locale: 'id_ID',
+          siteName,
+        },
+        image: ogImageMeta,
+      }}
+      twitter={{
+        card: 'summary_large_image',
+        title: pageTitle,
+        description: desc,
+        image: ogImgAbsolute,
+      }}
+    />
     <meta name="theme-color" content="#166534" />
     <script is:inline>
       // Default to light regardless of OS preference. Dark only when the user

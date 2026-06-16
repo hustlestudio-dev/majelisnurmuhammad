@@ -1,0 +1,83 @@
+---
+export const prerender = false
+
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import Button from '@/components/Button.astro'
+import Divider from '@/components/Divider.astro'
+import StarOrnament from '@/components/StarOrnament.astro'
+import { getScheduleById } from '@/lib/content'
+import { DAY_LABELS } from '@/lib/constants'
+
+const { id } = Astro.params
+const schedule = id ? await getScheduleById(id) : null
+
+if (!schedule) {
+  return new Response(null, {
+    status: 404,
+    statusText: 'Jadwal tidak ditemukan',
+  })
+}
+
+const day = DAY_LABELS[schedule.day] ?? schedule.day
+const time = [schedule.timeStart, schedule.timeEnd].filter(Boolean).join(' – ')
+
+const details = [
+  { label: 'Hari', value: day },
+  { label: 'Waktu', value: time || null },
+  { label: 'Pemateri', value: schedule.ustadz },
+  { label: 'Kitab / Materi', value: schedule.kitab },
+  { label: 'Lokasi', value: schedule.location },
+  { label: 'Rutin Mingguan', value: schedule.recurring ? 'Ya' : null },
+].filter((d) => d.value)
+---
+<BaseLayout
+  title={schedule.title}
+  description={`Jadwal pengajian: ${schedule.title}`}
+>
+  <article>
+    <header class="islamic-grid relative overflow-hidden border-b border-border/60">
+      <StarOrnament class="absolute -top-8 -right-8 size-40 opacity-[0.07]" />
+      <StarOrnament class="absolute -bottom-10 -left-10 size-44 opacity-[0.07]" />
+      <div class="relative mx-auto max-w-3xl px-4 py-16 text-center sm:px-6 sm:py-20">
+        <span class="inline-flex items-center rounded-full bg-primary px-4 py-1.5 font-display text-sm font-bold text-primary-foreground">
+          {day}
+        </span>
+        <h1 class="mt-4 font-display text-3xl font-extrabold text-balance sm:text-4xl md:text-5xl">
+          <span class="text-gradient-emerald">{schedule.title}</span>
+        </h1>
+        {time && <p class="mt-5 text-sm font-medium text-primary">{time}</p>}
+        <Divider class="mt-7" />
+      </div>
+    </header>
+
+    <div class="mx-auto max-w-3xl px-4 py-16 sm:px-6">
+      <dl class="grid gap-px overflow-hidden rounded-2xl border border-border bg-border sm:grid-cols-2">
+        {
+          details.map((d) => (
+            <div class="bg-card p-5">
+              <dt class="text-xs font-medium tracking-wide text-muted-foreground uppercase">
+                {d.label}
+              </dt>
+              <dd class="mt-1 font-display font-semibold">{d.value}</dd>
+            </div>
+          ))
+        }
+      </dl>
+
+      {
+        schedule.description && (
+          <div class="mt-8 rounded-2xl border border-border bg-card p-6">
+            <h2 class="font-display text-lg font-semibold">Keterangan</h2>
+            <p class="mt-2 leading-relaxed text-muted-foreground">
+              {schedule.description}
+            </p>
+          </div>
+        )
+      }
+
+      <div class="mt-12 flex justify-center">
+        <Button href="/jadwal" variant="outline">← Kembali ke Jadwal</Button>
+      </div>
+    </div>
+  </article>
+</BaseLayout>

@@ -53,6 +53,7 @@ const emdashAdminCssLayer = {
 
 // https://astro.build/config
 export default defineConfig({
+	site: process.env.SITE_URL ?? 'https://nurmuhammad.hustlestudio.tech',
 	output: 'server',
 	...(adapter ? { adapter } : {}),
 	...(session ? { session } : {}),

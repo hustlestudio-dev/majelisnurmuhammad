@@ -38,7 +38,8 @@ const renderSpan = (span: Span, markDefs: MarkDef[]): string => {
     }
     const def = markDefs.find((m) => m._key === mark)
     if (def?._type === 'link' && def.href) {
-      const url = escapeHtml(def.href)
+      const safe = /^(https?:|\/|#)/.test(def.href) ? def.href : '#'
+      const url = escapeHtml(safe)
       text = `<a href="${url}" target="_blank" rel="noopener noreferrer">${text}</a>`
     }
   }
