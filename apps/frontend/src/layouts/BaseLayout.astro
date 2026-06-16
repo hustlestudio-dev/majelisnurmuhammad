@@ -30,17 +30,13 @@ const desc =
   'Majelis Nur Muhammad — pusat kajian Islam Ahlussunnah wal Jama\'ah. Informasi jadwal pengajian, artikel keislaman, dan kegiatan dakwah. Dukung dakwah kami melalui donasi untuk keberlangsungan majelis.'
 const ogImg = ogImage ?? mediaUrl(settings.logo) ?? '/logo.jpeg'
 const ogImgAbsolute = new URL(ogImg, Astro.site ?? Astro.url).href
-const ogImageMeta = (settings.logo?.width && settings.logo?.height)
-  ? {
-      url: ogImgAbsolute,
-      width: settings.logo.width,
-      height: settings.logo.height,
-      alt: siteName,
-    }
-  : {
-      url: ogImgAbsolute,
-      alt: siteName,
-    }
+const ogImageMeta = {
+  url: ogImgAbsolute,
+  width: settings.logo?.width ?? 1080,
+  height: settings.logo?.height ?? 1080,
+  type: ogImg.endsWith('.png') ? 'image/png' : 'image/jpeg',
+  alt: siteName,
+}
 ---
 <!doctype html>
 <html lang="id" class="scroll-smooth">
