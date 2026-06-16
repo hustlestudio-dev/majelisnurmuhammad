@@ -1,123 +1,331 @@
 {
-	"$schema": "https://emdashcms.com/seed.schema.json",
-	"version": "1",
-	"meta": {
-		"name": "Majelis Nur Muhammad",
-		"description": "Skema konten situs Majelis Nur Muhammad"
-	},
-	"defaultLocale": "id",
-	"collections": [
-		{
-			"slug": "articles",
-			"label": "Artikel",
-			"labelSingular": "Artikel",
-			"supports": ["drafts"],
-			"fields": [
-				{ "slug": "title", "type": "string", "label": "Judul", "required": true },
-				{
-					"slug": "category",
-					"type": "select",
-					"label": "Kategori",
-					"required": true,
-					"validation": { "options": ["tafsir", "hadits", "fiqih", "akhlak", "umum"] }
-				},
-				{ "slug": "excerpt", "type": "text", "label": "Ringkasan" },
-				{ "slug": "cover_image", "type": "image", "label": "Gambar Sampul" },
-				{ "slug": "content", "type": "portableText", "label": "Isi", "required": true },
-				{ "slug": "tags", "type": "multiSelect", "label": "Tag" },
-				{ "slug": "author", "type": "string", "label": "Penulis" },
-				{ "slug": "published_date", "type": "datetime", "label": "Tanggal Terbit" }
-			]
-		},
-		{
-			"slug": "schedules",
-			"label": "Jadwal Pengajian",
-			"labelSingular": "Jadwal",
-			"fields": [
-				{ "slug": "title", "type": "string", "label": "Nama Kegiatan", "required": true },
-				{
-					"slug": "day",
-					"type": "select",
-					"label": "Hari",
-					"required": true,
-					"validation": { "options": ["ahad", "senin", "selasa", "rabu", "kamis", "jumat", "sabtu"] }
-				},
-				{ "slug": "time_start", "type": "string", "label": "Waktu Mulai" },
-				{ "slug": "time_end", "type": "string", "label": "Waktu Selesai" },
-				{ "slug": "ustadz", "type": "string", "label": "Pemateri / Ustadz" },
-				{ "slug": "kitab", "type": "string", "label": "Kitab / Materi" },
-				{ "slug": "location", "type": "string", "label": "Lokasi" },
-				{ "slug": "description", "type": "text", "label": "Keterangan" },
-				{ "slug": "recurring", "type": "boolean", "label": "Rutin Mingguan" },
-				{ "slug": "order", "type": "integer", "label": "Urutan" }
-			]
-		},
-		{
-			"slug": "announcements",
-			"label": "Pengumuman",
-			"labelSingular": "Pengumuman",
-			"supports": ["drafts"],
-			"fields": [
-				{ "slug": "title", "type": "string", "label": "Judul", "required": true },
-				{ "slug": "body", "type": "portableText", "label": "Isi Pengumuman", "required": true },
-				{ "slug": "date", "type": "datetime", "label": "Tanggal" },
-				{ "slug": "pinned", "type": "boolean", "label": "Sematkan (tampil di beranda)" },
-				{ "slug": "expires_at", "type": "datetime", "label": "Berlaku Sampai" }
-			]
-		},
-		{
-			"slug": "team",
-			"label": "Pengurus",
-			"labelSingular": "Pengurus",
-			"fields": [
-				{ "slug": "name", "type": "string", "label": "Nama", "required": true },
-				{ "slug": "role", "type": "string", "label": "Jabatan", "required": true },
-				{ "slug": "photo", "type": "image", "label": "Foto" },
-				{ "slug": "bio", "type": "text", "label": "Biografi Singkat" },
-				{ "slug": "order", "type": "integer", "label": "Urutan" }
-			]
-		},
-		{
-			"slug": "settings",
-			"label": "Pengaturan Situs",
-			"labelSingular": "Pengaturan Situs",
-			"fields": [
-				{ "slug": "title", "type": "string", "label": "Penanda (isi: main)", "required": true },
-				{ "slug": "site_name", "type": "string", "label": "Nama Situs" },
-				{ "slug": "tagline", "type": "string", "label": "Tagline" },
-				{ "slug": "logo", "type": "image", "label": "Logo" },
-				{
-					"slug": "hero_slides",
-					"type": "repeater",
-					"label": "Slide Hero (Slider Beranda)",
-					"fields": [
-						{ "slug": "image", "type": "image", "label": "Gambar Latar" },
-						{ "slug": "heading", "type": "string", "label": "Judul", "required": true },
-						{ "slug": "subheading", "type": "text", "label": "Sub-judul" },
-						{ "slug": "arabic", "type": "string", "label": "Teks Arab (opsional)" },
-						{ "slug": "cta_label", "type": "string", "label": "Teks Tombol" },
-						{ "slug": "cta_href", "type": "string", "label": "Tautan Tombol" }
-					]
-				},
-				{ "slug": "hero_verse_arabic", "type": "text", "label": "Ayat Hero - Teks Arab" },
-				{ "slug": "hero_verse_translation", "type": "text", "label": "Ayat Hero - Terjemahan" },
-				{ "slug": "hero_verse_reference", "type": "string", "label": "Ayat Hero - Sumber" },
-				{ "slug": "address", "type": "text", "label": "Alamat" },
-				{ "slug": "whatsapp", "type": "string", "label": "WhatsApp" },
-				{ "slug": "email", "type": "string", "label": "Email" },
-				{ "slug": "social_youtube", "type": "string", "label": "YouTube" },
-				{ "slug": "social_tiktok", "type": "string", "label": "TikTok" },
-				{ "slug": "social_instagram", "type": "string", "label": "Instagram" },
-				{ "slug": "social_facebook", "type": "string", "label": "Facebook" },
-				{ "slug": "donation_bank_name", "type": "string", "label": "Donasi - Nama Bank" },
-				{ "slug": "donation_account_number", "type": "string", "label": "Donasi - Nomor Rekening" },
-				{ "slug": "donation_account_holder", "type": "string", "label": "Donasi - Atas Nama" },
-				{ "slug": "donation_note", "type": "text", "label": "Donasi - Catatan" },
-				{ "slug": "footer_text", "type": "text", "label": "Teks Footer" }
-			]
-		}
-	],
-	"taxonomies": [],
-	"menus": [],
-	"widgetAreas": []
+  "$schema": "https://emdashcms.com/seed.schema.json",
+  "version": "1",
+  "meta": {
+    "name": "Majelis Nur Muhammad",
+    "description": "Skema konten situs Majelis Nur Muhammad"
+  },
+  "defaultLocale": "id",
+  "collections": [
+    {
+      "slug": "articles",
+      "label": "Artikel",
+      "labelSingular": "Artikel",
+      "supports": [
+        "drafts"
+      ],
+      "fields": [
+        {
+          "slug": "title",
+          "type": "string",
+          "label": "Judul",
+          "required": true
+        },
+        {
+          "slug": "category",
+          "type": "select",
+          "label": "Kategori",
+          "required": true,
+          "validation": {
+            "options": [
+              "tafsir",
+              "hadits",
+              "fiqih",
+              "akhlak",
+              "umum"
+            ]
+          }
+        },
+        {
+          "slug": "excerpt",
+          "type": "text",
+          "label": "Ringkasan"
+        },
+        {
+          "slug": "cover_image",
+          "type": "image",
+          "label": "Gambar Sampul"
+        },
+        {
+          "slug": "content",
+          "type": "portableText",
+          "label": "Isi",
+          "required": true
+        },
+        {
+          "slug": "tags",
+          "type": "multiSelect",
+          "label": "Tag"
+        },
+        {
+          "slug": "author",
+          "type": "string",
+          "label": "Penulis"
+        },
+        {
+          "slug": "published_date",
+          "type": "datetime",
+          "label": "Tanggal Terbit"
+        }
+      ]
+    },
+    {
+      "slug": "schedules",
+      "label": "Jadwal Pengajian",
+      "labelSingular": "Jadwal",
+      "fields": [
+        {
+          "slug": "title",
+          "type": "string",
+          "label": "Nama Kegiatan",
+          "required": true
+        },
+        {
+          "slug": "day",
+          "type": "select",
+          "label": "Hari",
+          "required": true,
+          "validation": {
+            "options": [
+              "ahad",
+              "senin",
+              "selasa",
+              "rabu",
+              "kamis",
+              "jumat",
+              "sabtu"
+            ]
+          }
+        },
+        {
+          "slug": "time_start",
+          "type": "string",
+          "label": "Waktu Mulai"
+        },
+        {
+          "slug": "time_end",
+          "type": "string",
+          "label": "Waktu Selesai"
+        },
+        {
+          "slug": "ustadz",
+          "type": "string",
+          "label": "Pemateri / Ustadz"
+        },
+        {
+          "slug": "kitab",
+          "type": "string",
+          "label": "Kitab / Materi"
+        },
+        {
+          "slug": "location",
+          "type": "string",
+          "label": "Lokasi"
+        },
+        {
+          "slug": "description",
+          "type": "text",
+          "label": "Keterangan"
+        },
+        {
+          "slug": "recurring",
+          "type": "boolean",
+          "label": "Rutin Mingguan"
+        },
+        {
+          "slug": "order",
+          "type": "integer",
+          "label": "Urutan"
+        }
+      ]
+    },
+    {
+      "slug": "announcements",
+      "label": "Pengumuman",
+      "labelSingular": "Pengumuman",
+      "supports": [
+        "drafts"
+      ],
+      "fields": [
+        {
+          "slug": "title",
+          "type": "string",
+          "label": "Judul",
+          "required": true
+        },
+        {
+          "slug": "body",
+          "type": "portableText",
+          "label": "Isi Pengumuman",
+          "required": true
+        },
+        {
+          "slug": "date",
+          "type": "datetime",
+          "label": "Tanggal"
+        },
+        {
+          "slug": "pinned",
+          "type": "boolean",
+          "label": "Sematkan (tampil di beranda)"
+        },
+        {
+          "slug": "expires_at",
+          "type": "datetime",
+          "label": "Berlaku Sampai"
+        }
+      ]
+    },
+    {
+      "slug": "team",
+      "label": "Pengurus",
+      "labelSingular": "Pengurus",
+      "fields": [
+        {
+          "slug": "name",
+          "type": "string",
+          "label": "Nama",
+          "required": true
+        },
+        {
+          "slug": "role",
+          "type": "string",
+          "label": "Jabatan",
+          "required": true
+        },
+        {
+          "slug": "photo",
+          "type": "image",
+          "label": "Foto"
+        },
+        {
+          "slug": "bio",
+          "type": "text",
+          "label": "Biografi Singkat"
+        },
+        {
+          "slug": "order",
+          "type": "integer",
+          "label": "Urutan"
+        }
+      ]
+    },
+    {
+      "slug": "hero",
+      "label": "Hero",
+      "labelSingular": "Slide",
+      "fields": [
+        {
+          "slug": "image",
+          "type": "image",
+          "label": "Gambar"
+        },
+        {
+          "slug": "heading",
+          "type": "string",
+          "label": "Judul",
+          "required": true
+        },
+        {
+          "slug": "subheading",
+          "type": "text",
+          "label": "Subjudul"
+        },
+        {
+          "slug": "arabic",
+          "type": "string",
+          "label": "Teks Arab"
+        },
+        {
+          "slug": "cta_label",
+          "type": "string",
+          "label": "Label Tombol"
+        },
+        {
+          "slug": "cta_href",
+          "type": "string",
+          "label": "Link Tombol"
+        },
+        {
+          "slug": "order",
+          "type": "number",
+          "label": "Urutan"
+        }
+      ]
+    },
+    {
+      "slug": "info_situs",
+      "label": "Info Situs",
+      "labelSingular": "Info Situs",
+      "fields": [
+        {
+          "slug": "address",
+          "type": "text",
+          "label": "Alamat"
+        },
+        {
+          "slug": "whatsapp",
+          "type": "string",
+          "label": "WhatsApp"
+        },
+        {
+          "slug": "email",
+          "type": "string",
+          "label": "Email"
+        },
+        {
+          "slug": "tiktok",
+          "type": "string",
+          "label": "TikTok"
+        },
+        {
+          "slug": "donation_bank_name",
+          "type": "string",
+          "label": "Donasi - Nama Bank"
+        },
+        {
+          "slug": "donation_account_number",
+          "type": "string",
+          "label": "Donasi - No. Rekening"
+        },
+        {
+          "slug": "donation_account_holder",
+          "type": "string",
+          "label": "Donasi - Atas Nama"
+        },
+        {
+          "slug": "donation_note",
+          "type": "text",
+          "label": "Donasi - Catatan"
+        },
+        {
+          "slug": "footer_text",
+          "type": "text",
+          "label": "Teks Footer"
+        },
+        {
+          "slug": "hero_verse_arabic",
+          "type": "string",
+          "label": "Ayat Hero - Arab"
+        },
+        {
+          "slug": "hero_verse_translation",
+          "type": "text",
+          "label": "Ayat Hero - Terjemahan"
+        },
+        {
+          "slug": "hero_verse_reference",
+          "type": "string",
+          "label": "Ayat Hero - Referensi"
+        }
+      ]
+    }
+  ],
+  "taxonomies": [],
+  "menus": [],
+  "widgetAreas": [],
+  "settings": {
+    "title": "Majelis Nur Muhammad",
+    "tagline": "Pondok Pesantren Nur Muhammad Al-Hasany Banjaran"
+  }
 }
