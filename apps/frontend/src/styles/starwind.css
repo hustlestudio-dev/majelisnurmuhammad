@@ -58,7 +58,6 @@
   --color-accent-foreground: var(--accent-foreground);
   --color-gold: var(--gold);
   --color-gold-foreground: var(--gold-foreground);
-  --color-lime-brand: var(--lime-brand);
   --color-info: var(--info);
   --color-info-foreground: var(--info-foreground);
   --color-success: var(--success);
@@ -108,8 +107,7 @@
   --accent: #e6f3dc;
   --accent-foreground: #1f3d12;
   --gold: #b8902a;
-  --gold-foreground: #ffffff;
-  --lime-brand: #84cc16;
+  --gold-foreground: #11271b;
   --info: var(--color-sky-300);
   --info-foreground: var(--color-sky-950);
   --success: #16a34a;
@@ -154,7 +152,6 @@
   --accent-foreground: #d9eccf;
   --gold: #e3c766;
   --gold-foreground: #12100a;
-  --lime-brand: #a3e635;
   --info: var(--color-sky-300);
   --info-foreground: var(--color-sky-950);
   --success: #4ade80;

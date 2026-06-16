@@ -1,0 +1,18 @@
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "nurmuhammad-official",
+	"compatibility_date": "2025-01-15",
+	"compatibility_flags": ["nodejs_compat"],
+	"d1_databases": [
+		{ "binding": "DB", "database_name": "emdash-db" }
+	],
+	"r2_buckets": [
+		{ "binding": "MEDIA", "bucket_name": "emdash-media" }
+	],
+	"kv_namespaces": [
+		{ "binding": "SESSION", "id": "<run: wrangler kv namespace create SESSION>" }
+	],
+	"observability": {
+		"enabled": true
+	}
+}

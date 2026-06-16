@@ -10,12 +10,12 @@ const { announcement } = Astro.props
 const summary = richTextToPlain(announcement.body, 180)
 ---
 <article
-  class="rounded-2xl border border-border bg-card p-5 shadow-sm transition-all duration-300 hover:border-primary/30 hover:shadow-lg"
+  class="rounded-2xl border border-border bg-card/60 p-5"
 >
   <div class="flex items-center gap-2">
     {
       announcement.pinned && (
-        <span class="inline-flex items-center gap-1 rounded-full bg-gold/15 px-2.5 py-0.5 text-xs font-semibold text-gold">
+        <span class="inline-flex items-center gap-1 rounded-full bg-gold px-2.5 py-0.5 text-xs font-semibold text-gold-foreground">
           Penting
         </span>
       )

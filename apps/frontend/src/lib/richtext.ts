@@ -1,11 +1,16 @@
-// Minimal Lexical (Payload richText) → HTML serializer.
-// Handles paragraphs, headings, lists, quotes, links, and inline formatting.
+// Minimal Portable Text (EmDash richtext) → HTML serializer.
+// Handles blocks (paragraphs, headings, blockquote), lists, and inline marks.
 
-const IS_BOLD = 1
-const IS_ITALIC = 1 << 1
-const IS_STRIKETHROUGH = 1 << 2
-const IS_UNDERLINE = 1 << 3
-const IS_CODE = 1 << 4
+type Span = { _type?: string; text?: string; marks?: string[] }
+type MarkDef = { _key?: string; _type?: string; href?: string }
+type Block = {
+  _type?: string
+  style?: string
+  listItem?: string
+  level?: number
+  children?: Span[]
+  markDefs?: MarkDef[]
+}
 
 const escapeHtml = (s: string): string =>
   s
@@ -14,68 +19,87 @@ const escapeHtml = (s: string): string =>
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
 
-const renderText = (node: any): string => {
-  let text = escapeHtml(String(node.text ?? ''))
-  const format = typeof node.format === 'number' ? node.format : 0
-  if (format & IS_CODE) text = `<code>${text}</code>`
-  if (format & IS_BOLD) text = `<strong>${text}</strong>`
-  if (format & IS_ITALIC) text = `<em>${text}</em>`
-  if (format & IS_UNDERLINE) text = `<u>${text}</u>`
-  if (format & IS_STRIKETHROUGH) text = `<s>${text}</s>`
+const DECORATORS: Record<string, [string, string]> = {
+  strong: ['<strong>', '</strong>'],
+  em: ['<em>', '</em>'],
+  underline: ['<u>', '</u>'],
+  'strike-through': ['<s>', '</s>'],
+  strike: ['<s>', '</s>'],
+  code: ['<code>', '</code>'],
+}
+
+const renderSpan = (span: Span, markDefs: MarkDef[]): string => {
+  let text = escapeHtml(String(span.text ?? ''))
+  for (const mark of span.marks ?? []) {
+    const dec = DECORATORS[mark]
+    if (dec) {
+      text = `${dec[0]}${text}${dec[1]}`
+      continue
+    }
+    const def = markDefs.find((m) => m._key === mark)
+    if (def?._type === 'link' && def.href) {
+      const url = escapeHtml(def.href)
+      text = `<a href="${url}" target="_blank" rel="noopener noreferrer">${text}</a>`
+    }
+  }
   return text
 }
 
-const renderChildren = (children: any[] | undefined): string =>
-  (children ?? []).map(renderNode).join('')
+const renderBlockInner = (block: Block): string =>
+  (block.children ?? [])
+    .map((span) => renderSpan(span, block.markDefs ?? []))
+    .join('')
 
-const renderNode = (node: any): string => {
-  if (!node) return ''
-  switch (node.type) {
-    case 'text':
-      return renderText(node)
-    case 'linebreak':
-      return '<br />'
-    case 'paragraph': {
-      const inner = renderChildren(node.children)
-      return inner ? `<p>${inner}</p>` : ''
-    }
-    case 'heading': {
-      const tag = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'].includes(node.tag)
-        ? node.tag
-        : 'h3'
-      return `<${tag}>${renderChildren(node.children)}</${tag}>`
-    }
-    case 'quote':
-      return `<blockquote>${renderChildren(node.children)}</blockquote>`
-    case 'list': {
-      const tag = node.listType === 'number' ? 'ol' : 'ul'
-      return `<${tag}>${renderChildren(node.children)}</${tag}>`
-    }
-    case 'listitem':
-      return `<li>${renderChildren(node.children)}</li>`
-    case 'link': {
-      const url = escapeHtml(String(node.fields?.url ?? node.url ?? '#'))
-      const target = node.fields?.newTab ? ' target="_blank" rel="noopener noreferrer"' : ''
-      return `<a href="${url}"${target}>${renderChildren(node.children)}</a>`
-    }
-    default:
-      return renderChildren(node.children)
-  }
+const blockTag = (style?: string): string => {
+  if (style && /^h[1-6]$/.test(style)) return style
+  if (style === 'blockquote') return 'blockquote'
+  return 'p'
 }
 
+const toBlocks = (value: unknown): Block[] =>
+  Array.isArray(value) ? (value as Block[]) : []
+
 export const renderRichText = (value: unknown): string => {
-  const root = (value as any)?.root
-  if (!root?.children) return ''
-  return renderChildren(root.children)
+  const blocks = toBlocks(value)
+  const html: string[] = []
+  let listTag: 'ul' | 'ol' | null = null
+
+  const closeList = () => {
+    if (listTag) {
+      html.push(`</${listTag}>`)
+      listTag = null
+    }
+  }
+
+  for (const block of blocks) {
+    if (block._type && block._type !== 'block') continue
+    const inner = renderBlockInner(block)
+    if (block.listItem) {
+      const wanted = block.listItem === 'number' ? 'ol' : 'ul'
+      if (listTag !== wanted) {
+        closeList()
+        listTag = wanted
+        html.push(`<${listTag}>`)
+      }
+      html.push(`<li>${inner}</li>`)
+      continue
+    }
+    closeList()
+    if (!inner) continue
+    const tag = blockTag(block.style)
+    html.push(`<${tag}>${inner}</${tag}>`)
+  }
+  closeList()
+  return html.join('')
 }
 
 export const richTextToPlain = (value: unknown, max = 200): string => {
-  const root = (value as any)?.root
-  if (!root) return ''
-  const walk = (node: any): string => {
-    if (node?.type === 'text') return String(node.text ?? '')
-    return (node?.children ?? []).map(walk).join(' ')
-  }
-  const text = walk(root).replace(/\s+/g, ' ').trim()
+  const blocks = toBlocks(value)
+  const text = blocks
+    .filter((b) => !b._type || b._type === 'block')
+    .map((b) => (b.children ?? []).map((s) => s.text ?? '').join(''))
+    .join(' ')
+    .replace(/\s+/g, ' ')
+    .trim()
   return text.length > max ? `${text.slice(0, max).trim()}…` : text
 }

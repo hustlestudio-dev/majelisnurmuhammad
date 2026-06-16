@@ -2,7 +2,7 @@
 import Logo from './Logo.astro'
 import StarOrnament from './StarOrnament.astro'
 import { NAV_LINKS } from '@/lib/constants'
-import { mediaUrl } from '@/lib/payload'
+import { mediaUrl } from '@/lib/content'
 import type { SiteSettings } from '@/lib/types'
 
 interface Props {
@@ -55,7 +55,7 @@ const socials = [
     </div>
 
     <div>
-      <h3 class="font-display text-sm font-semibold tracking-wide text-gold text-primary-foreground uppercase">Navigasi</h3>
+      <h3 class="font-display text-sm font-semibold tracking-wide text-primary-foreground uppercase">Navigasi</h3>
       <ul class="mt-4 space-y-2 text-sm text-primary-foreground/90">
         {
           NAV_LINKS.map((link) => (
@@ -70,7 +70,7 @@ const socials = [
     </div>
 
     <div>
-      <h3 class="font-display text-sm font-semibold tracking-wide text-gold text-primary-foreground uppercase">Kontak</h3>
+      <h3 class="font-display text-sm font-semibold tracking-wide text-primary-foreground uppercase">Kontak</h3>
       <ul class="mt-4 space-y-2 text-sm text-primary-foreground/90">
         {settings.address && <li>{settings.address}</li>}
         {settings.whatsapp && <li>WA: {settings.whatsapp}</li>}

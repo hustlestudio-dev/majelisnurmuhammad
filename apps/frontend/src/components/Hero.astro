@@ -2,7 +2,7 @@
 import Logo from './Logo.astro'
 import Button from './Button.astro'
 import StarOrnament from './StarOrnament.astro'
-import { mediaUrl } from '@/lib/payload'
+import { mediaUrl } from '@/lib/content'
 import type { SiteSettings } from '@/lib/types'
 
 interface Props {
@@ -63,7 +63,6 @@ const multiple = slides.length > 1
                 class="absolute inset-0 -z-10 size-full object-cover"
                 loading={i === 0 ? 'eager' : 'lazy'}
               />
-              <div class="absolute inset-0 -z-10 bg-black/65" />
             </>
           ) : (
             <div
@@ -82,7 +81,11 @@ const multiple = slides.length > 1
             class="pointer-events-none absolute right-0 bottom-4 size-56 opacity-10"
           />
 
-          <div class="absolute inset-0 bg-black/45" aria-hidden="true"></div>
+          <div
+            class="absolute inset-0"
+            aria-hidden="true"
+            style="background: linear-gradient(to bottom, rgba(6,18,11,0.45) 0%, rgba(6,18,11,0.6) 55%, rgba(6,18,11,0.8) 100%)"
+          ></div>
 
           {/* Content */}
           <div class="relative mx-auto flex max-w-3xl flex-col items-center px-4 py-24 text-center sm:px-6">
@@ -162,6 +165,17 @@ const multiple = slides.length > 1
               />
             ))}
           </div>
+
+          <button
+            type="button"
+            data-hero-toggle
+            aria-label="Jeda korsel"
+            aria-pressed="true"
+            class="absolute right-3 bottom-5 z-20 flex size-11 items-center justify-center rounded-full border border-white/30 bg-black/20 text-white backdrop-blur transition hover:bg-black/40 sm:right-6"
+          >
+            <svg data-hero-icon-pause class="size-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>
+            <svg data-hero-icon-play class="hidden size-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.14v13.72a1 1 0 0 0 1.54.84l10.3-6.86a1 1 0 0 0 0-1.68L9.54 4.3A1 1 0 0 0 8 5.14Z"/></svg>
+          </button>
         </>
       )
     }
@@ -195,28 +209,55 @@ const multiple = slides.length > 1
         }
         const next = () => show(i + 1)
         const prev = () => show(i - 1)
-        const start = () => {
+        const reduce = matchMedia('(prefers-reduced-motion: reduce)')
+        const toggle = root.querySelector('[data-hero-toggle]')
+        const iconPause = root.querySelector('[data-hero-icon-pause]')
+        const iconPlay = root.querySelector('[data-hero-icon-play]')
+        let playing = false
+        const stop = () => {
+          if (timer) clearInterval(timer)
+          timer = null
+        }
+        const reflect = () => {
+          if (!toggle) return
+          toggle.setAttribute('aria-pressed', String(playing))
+          toggle.setAttribute('aria-label', playing ? 'Jeda korsel' : 'Putar korsel')
+          iconPause?.classList.toggle('hidden', !playing)
+          iconPlay?.classList.toggle('hidden', playing)
+        }
+        const run = () => {
           stop()
           timer = setInterval(next, 6000)
         }
-        const stop = () => timer && clearInterval(timer)
+        const play = () => {
+          playing = true
+          run()
+          reflect()
+        }
+        const pause = () => {
+          playing = false
+          stop()
+          reflect()
+        }
         root.querySelector('[data-hero-next]')?.addEventListener('click', () => {
           next()
-          start()
+          if (playing) run()
         })
         root.querySelector('[data-hero-prev]')?.addEventListener('click', () => {
           prev()
-          start()
+          if (playing) run()
         })
         dots.forEach((d, k) =>
           d.addEventListener('click', () => {
             show(k)
-            start()
+            if (playing) run()
           }),
         )
-        root.addEventListener('mouseenter', stop)
-        root.addEventListener('mouseleave', start)
-        start()
+        toggle?.addEventListener('click', () => (playing ? pause() : play()))
+        root.addEventListener('mouseenter', () => playing && stop())
+        root.addEventListener('mouseleave', () => playing && run())
+        if (reduce.matches) pause()
+        else play()
       })()
     </script>
   )

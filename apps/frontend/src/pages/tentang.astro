@@ -6,7 +6,7 @@ import TeamCard from '@/components/TeamCard.astro'
 import Divider from '@/components/Divider.astro'
 import StarOrnament from '@/components/StarOrnament.astro'
 import Button from '@/components/Button.astro'
-import { getSiteSettings, getTeam } from '@/lib/payload'
+import { getSiteSettings, getTeam } from '@/lib/content'
 
 const [settings, team] = await Promise.all([getSiteSettings(), getTeam()])
 
@@ -77,19 +77,18 @@ const waLink = settings.whatsapp
   <!-- Nilai -->
   <section class="mx-auto max-w-6xl px-4 py-16 sm:px-6">
     <SectionHeading
-      eyebrow="Prinsip Kami"
       title="Nilai-Nilai Majelis"
       subtitle="Pondasi yang menjiwai setiap kegiatan dan langkah kami."
     />
-    <div class="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+    <div class="mt-12 grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
       {
         nilai.map((n) => (
-          <div class="rounded-2xl border border-border bg-card p-6 text-center shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-lg">
-            <span class="mx-auto flex size-12 items-center justify-center rounded-xl bg-primary/10 font-display text-lg font-bold text-primary">
+          <div class="text-center">
+            <span class="mx-auto flex size-14 items-center justify-center rounded-full bg-primary/10 font-display text-xl font-bold text-primary ring-1 ring-primary/15">
               {n.title.charAt(0)}
             </span>
             <h3 class="mt-4 font-display font-semibold">{n.title}</h3>
-            <p class="mt-1 text-sm text-muted-foreground">{n.desc}</p>
+            <p class="mx-auto mt-1.5 max-w-[22ch] text-sm leading-relaxed text-muted-foreground">{n.desc}</p>
           </div>
         ))
       }
@@ -102,7 +101,6 @@ const waLink = settings.whatsapp
       <section class="bg-secondary/40">
         <div class="mx-auto max-w-6xl px-4 py-16 sm:px-6">
           <SectionHeading
-            eyebrow="Pengurus"
             title="Susunan Pengurus"
             subtitle="Mereka yang berkhidmat melayani majelis dengan ikhlas."
           />

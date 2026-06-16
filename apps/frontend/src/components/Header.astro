@@ -2,7 +2,7 @@
 import Logo from './Logo.astro'
 import ThemeToggle from './ThemeToggle.astro'
 import { NAV_LINKS } from '@/lib/constants'
-import { mediaUrl } from '@/lib/payload'
+import { mediaUrl } from '@/lib/content'
 import type { SiteSettings } from '@/lib/types'
 
 interface Props {
@@ -52,10 +52,14 @@ const siteName = settings.siteName ?? 'Majelis Nur Muhammad'
         type="button"
         aria-label="Buka menu"
         aria-expanded="false"
+        aria-controls="mobile-menu"
         class="inline-flex size-10 items-center justify-center rounded-full border border-border text-foreground/80 hover:bg-accent md:hidden"
       >
-        <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <svg data-icon-open class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
           <path d="M3 6h18M3 12h18M3 18h18"></path>
+        </svg>
+        <svg data-icon-close class="hidden size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M6 6l12 12M18 6L6 18"></path>
         </svg>
       </button>
     </div>
@@ -87,9 +91,26 @@ const siteName = settings.siteName ?? 'Majelis Nur Muhammad'
     const btn = document.getElementById('mobile-menu-btn')
     const menu = document.getElementById('mobile-menu')
     if (!btn || !menu) return
-    btn.addEventListener('click', () => {
-      const open = menu.classList.toggle('hidden')
-      btn.setAttribute('aria-expanded', String(!open))
+    const iconOpen = btn.querySelector('[data-icon-open]')
+    const iconClose = btn.querySelector('[data-icon-close]')
+    const setOpen = (open) => {
+      menu.classList.toggle('hidden', !open)
+      btn.setAttribute('aria-expanded', String(open))
+      btn.setAttribute('aria-label', open ? 'Tutup menu' : 'Buka menu')
+      iconOpen?.classList.toggle('hidden', open)
+      iconClose?.classList.toggle('hidden', !open)
+    }
+    btn.addEventListener('click', () => setOpen(menu.classList.contains('hidden')))
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !menu.classList.contains('hidden')) {
+        setOpen(false)
+        btn.focus()
+      }
     })
+    document.addEventListener('click', (e) => {
+      if (menu.classList.contains('hidden')) return
+      if (!menu.contains(e.target) && !btn.contains(e.target)) setOpen(false)
+    })
+    menu.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => setOpen(false)))
   })()
 </script>
