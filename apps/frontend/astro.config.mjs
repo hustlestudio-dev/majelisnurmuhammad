@@ -8,7 +8,13 @@ import { emailPassword } from './src/auth/email-password/index.ts';
 import swup from '@swup/astro';
 import { sqlite } from 'emdash/db';
 
-const isCloudflare = process.env.DEPLOY_TARGET === 'cloudflare';
+// Cloudflare's git-connected build (Workers Builds / Pages) sets CF_PAGES /
+// WORKERS_CI but not our DEPLOY_TARGET, so detect those too — otherwise the
+// adapter is skipped and `astro build` fails with NoAdapterInstalled.
+const isCloudflare =
+	process.env.DEPLOY_TARGET === 'cloudflare' ||
+	process.env.CF_PAGES === '1' ||
+	process.env.WORKERS_CI === '1';
 
 let adapter;
 let database;
