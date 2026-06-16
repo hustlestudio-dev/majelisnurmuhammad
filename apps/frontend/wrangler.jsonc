@@ -4,7 +4,7 @@
 	"compatibility_date": "2025-01-15",
 	"compatibility_flags": ["nodejs_compat"],
 	"d1_databases": [
-		{ "binding": "DB", "database_name": "emdash-db", "database_id": "044a9d20-9ca0-4db7-b3e9-d558d14bd5cb" }
+		{ "binding": "DB", "database_name": "nurmuhammad-apac", "database_id": "d35e693c-242f-418f-972c-45dc5f7fd9a5" }
 	],
 	"r2_buckets": [
 		{ "binding": "MEDIA", "bucket_name": "emdash-media" }
@@ -14,8 +14,8 @@
 	],
 	"observability": {
 		"logs": {
-		"enabled": false,
-		"invocation_logs": true
+			"enabled": true,
+			"invocation_logs": true
 		}
 	}
 }
