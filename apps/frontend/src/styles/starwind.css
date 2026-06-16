@@ -1,3 +1,10 @@
+/* Declare layer order first so the EmDash admin stylesheet (wrapped into
+   `emdash-admin` by a Vite transform in astro.config.mjs) stays lowest priority.
+   In dev, Astro's module-graph style crawler leaks the admin Tailwind bundle —
+   805+ unlayered utilities and a base `body{}` — onto public pages where it
+   would otherwise out-cascade our layered utilities (breaking md:* responsive
+   classes and dark mode). Pinning it to the lowest layer neutralises that. */
+@layer emdash-admin, theme, base, components, utilities;
 @import "tailwindcss";
 @import "tw-animate-css";
 @plugin "@tailwindcss/forms";

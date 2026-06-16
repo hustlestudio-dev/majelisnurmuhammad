@@ -13,6 +13,9 @@
 		{ "binding": "SESSION", "id": "<run: wrangler kv namespace create SESSION>" }
 	],
 	"observability": {
-		"enabled": true
+		"logs": {
+		"enabled": false,
+		"invocation_logs": true
+		}
 	}
 }

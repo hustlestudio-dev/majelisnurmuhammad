@@ -30,6 +30,21 @@ if (isCloudflare) {
 	session = { driver: sessionDrivers.fsLite({ base: './.sessions' }) };
 }
 
+// In dev, Astro's style crawler leaks @emdash-cms/admin's compiled Tailwind
+// bundle (mostly unlayered utilities) onto public pages, where it out-cascades
+// the site's layered utilities. Wrap it in the lowest cascade layer so it can
+// never override site styles. No-op for the admin route itself (it declares no
+// competing layer order). Prod is unaffected — admin CSS isn't imported there.
+const emdashAdminCssLayer = {
+	name: 'emdash-admin-css-layer',
+	enforce: 'pre',
+	transform(code, id) {
+		if (id.replace(/\\/g, '/').includes('@emdash-cms/admin/dist/styles.css')) {
+			return { code: `@layer emdash-admin{\n${code}\n}`, map: null };
+		}
+	},
+};
+
 // https://astro.build/config
 export default defineConfig({
 	output: 'server',
@@ -45,6 +60,6 @@ export default defineConfig({
 		}),
 	],
 	vite: {
-		plugins: [tailwindcss()],
+		plugins: [emdashAdminCssLayer, tailwindcss()],
 	},
 });
