@@ -29,6 +29,9 @@ importers:
       '@astrojs/react':
         specifier: ^5.0.7
         version: 5.0.7(@types/node@22.19.9)(@types/react-dom@19.2.3(@types/react@19.2.9))(@types/react@19.2.9)(jiti@2.7.0)(lightningcss@1.32.0)(react-dom@19.2.1(react@19.2.1))(react@19.2.1)(sass@1.77.4)(terser@5.16.9)(tsx@4.22.4)(yaml@2.9.0)
+      '@emdash-cms/auth':
+        specifier: ^0.19.0
+        version: 0.19.0(astro@6.4.6(@netlify/blobs@10.7.9)(@types/node@22.19.9)(aws4fetch@1.0.20)(jiti@2.7.0)(lightningcss@1.32.0)(rollup@2.80.0)(sass@1.77.4)(terser@5.16.9)(tsx@4.22.4)(yaml@2.9.0))(kysely@0.29.2)
       '@emdash-cms/cloudflare':
         specifier: ^0.19.0
         version: 0.19.0(28760f767d8f98f74231be6ee0626bb5)
@@ -81,9 +84,6 @@ importers:
       '@astrojs/check':
         specifier: ^0.9.9
         version: 0.9.9(prettier@3.8.4)(typescript@5.7.3)
-      '@types/react':
-        specifier: 19.2.9
-        version: 19.2.9
       cross-env:
         specifier: ^7.0.3
         version: 7.0.3
