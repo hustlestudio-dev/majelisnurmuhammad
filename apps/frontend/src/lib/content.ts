@@ -110,7 +110,7 @@ const mapHeroSlide = (entry: any): HeroSlide => {
   const d = entry?.data ?? {}
   return {
     image: heroImage(d.image),
-    heading: d.heading,
+    heading: d.title ?? d.heading,
     subheading: d.subheading ?? null,
     arabic: d.arabic ?? null,
     ctaLabel: d.cta_label ?? null,

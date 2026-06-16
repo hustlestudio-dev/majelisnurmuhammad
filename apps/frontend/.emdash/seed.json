@@ -221,7 +221,7 @@
           "label": "Gambar"
         },
         {
-          "slug": "heading",
+          "slug": "title",
           "type": "string",
           "label": "Judul",
           "required": true

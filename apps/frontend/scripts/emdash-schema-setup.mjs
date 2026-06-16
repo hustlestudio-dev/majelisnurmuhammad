@@ -130,7 +130,7 @@ const HERO = {
   supports: [],
   fields: [
     { slug: 'image', label: 'Gambar', type: 'image' },
-    { slug: 'heading', label: 'Judul', type: 'string', required: true },
+    { slug: 'title', label: 'Judul', type: 'string', required: true },
     { slug: 'subheading', label: 'Subjudul', type: 'text' },
     { slug: 'arabic', label: 'Teks Arab', type: 'string' },
     { slug: 'cta_label', label: 'Label Tombol', type: 'string' },
